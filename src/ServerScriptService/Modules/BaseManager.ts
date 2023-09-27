@@ -1,3 +1,4 @@
+//Manages Base Health
 export class BaseManager {
     readonly userId: number
     readonly maxHealth: number

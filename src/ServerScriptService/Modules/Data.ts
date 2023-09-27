@@ -1,5 +1,5 @@
+//Manages and Saves Player Datas
 import { TDPlayer } from "ServerScriptService/Game.Server";
-
 const Data = new Map<number, TDPlayer>()
 
 export function SetData(pIndex: number, data: any){
