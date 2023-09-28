@@ -7,7 +7,7 @@ import { ShopManager } from "./Modules/ShopManager";
 import { TowerManager } from "./Modules/TowerManager";
 import { TraitsManager } from "./Modules/TraitsManager";
 import { WaveManager } from "./Modules/WaveManager";
-import { GetData, SetData } from "./Modules/Data";
+import { GetData, SetData } from "../ReplicatedStorage/Data";
 
 declare global {
     interface KnitServices {

@@ -1,6 +1,6 @@
 //Manages Mobs
 import { ReplicatedStorage } from "@rbxts/services"
-import { GetData } from "./Data"
+import { GetData } from "../../ReplicatedStorage/Data"
 
 //Data Types sent between functions
 interface MobInfo {
@@ -45,6 +45,20 @@ class Mob {
             const attack = {dealt: damage, dead: false}
             return attack
         }
+    }
+    freeze(length: number) {
+        task.spawn(() => {
+            if (this.frozen === false) {
+                const ice = this.model?.FindFirstChild("Ice")
+                if (ice?.IsA("BasePart")) {
+                    this.frozen = true
+                    ice.Transparency = 0.4
+                    task.wait(length)
+                    ice.Transparency = 1
+                    this.frozen = false
+                }
+            }
+        })
     }
 }
 
@@ -100,6 +114,7 @@ export class MobManager {
             task.wait(0.2)
         }
     }
+    //Functions that access the Mob Instance
     takeDamage(mobIndex: number, damage: number) {
         const coinManager = GetData(this.userId)?.coinManager
         const info = (this.mobs[mobIndex].takeDamage(damage))
@@ -107,5 +122,8 @@ export class MobManager {
         if (info.dead) {
             this.mobs.remove(mobIndex)
         }
+    }
+    freeze(mobIndex: number, length: number) {
+        this.mobs[mobIndex].freeze(length)
     }
 }
