@@ -25,6 +25,12 @@ export interface TowerCard {
     info: TowerInfo
 }
 
+export enum TowerPriority {
+    First = 0,
+    Strongest = 1,
+    Weakest = 2,
+}
+
 //Base class for all towers
 export class Tower {
     readonly name: string
@@ -37,7 +43,7 @@ export class Tower {
     level: number
     position: Vector3
     model: Model
-    target: string
+    priority: TowerPriority
     constructor(info: TowerInfo, position: Vector3, model: Model) {
         this.name = info.name
         this.stats = info.stats
@@ -45,6 +51,6 @@ export class Tower {
         this.level = 0
         this.position = position
         this.model = model
-        this.target = "First"
+        this.priority = TowerPriority.First
     }
 }

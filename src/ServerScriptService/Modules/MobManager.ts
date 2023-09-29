@@ -14,15 +14,15 @@ interface DamageInfo {
 }
 
 //Mob Instance
-class Mob {
+export class Mob {
     readonly model?: Model
     readonly walkSpeed: number
     readonly maxHealth: number
     health: number
     waypoint: number
-    position?: Vector3
+    position: Vector3
     frozen: boolean
-    constructor(mobInfo: MobInfo) {
+    constructor(mobInfo: MobInfo, spawn: Vector3) {
         const model = ReplicatedStorage.WaitForChild(mobInfo.model)
         if (model.IsA("Model")) {
             this.model = model
@@ -32,6 +32,7 @@ class Mob {
         this.health = mobInfo.maxHealth
         this.waypoint = 1
         this.frozen = false
+        this.position = new Vector3(spawn.X, 0, spawn.Z)
     }
     takeDamage(damage: number) {
         const preHealth = this.health
@@ -106,12 +107,14 @@ export class MobManager {
     //Spawns a Wave
     spawnWave(spawnList: Array<MobInfo>) {
         const waypoints = GetData(this.userId)?.mapManager.waypoints
-        for (let i = 0; i < spawnList.size(); i++) {
-            const mobInfo = spawnList[i]
-            const mob = new Mob(mobInfo)
-            mob.position = waypoints?.[0]
-            this.mobs.push(mob)
-            task.wait(0.2)
+        if (waypoints) {
+            for (let i = 0; i < spawnList.size(); i++) {
+                const mobInfo = spawnList[i]
+                const mob = new Mob(mobInfo, waypoints[0])
+                mob.position = waypoints[0]
+                this.mobs.push(mob)
+                task.wait(0.2)
+            }
         }
     }
     //Functions that access the Mob Instance

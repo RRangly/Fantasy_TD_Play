@@ -1,8 +1,9 @@
 import { ReplicatedStorage, Workspace } from "@rbxts/services"
 import { GetData } from "ReplicatedStorage/Data"
 import { Minigunner } from "ReplicatedStorage/Towers/Minigunner"
-import { Tower, TowerCard } from "ReplicatedStorage/Towers/Tower"
+import { Tower, TowerCard, TowerPriority } from "ReplicatedStorage/Towers/Tower"
 import TowerList from "ReplicatedStorage/Towers/Towers"
+import { Mob } from "./MobManager"
 
 export class TowerManager {
     readonly userId: number
@@ -26,7 +27,7 @@ export class TowerManager {
         }
         return false
     }
-    //places
+    //Places Tower
     place(cardIndex: number, position: Vector3) {
         const card = this.cards[cardIndex]
         if (this.checkPlacement(card.info.placement.type, position) && this.towers.size() < this.towerLimit) {
@@ -68,16 +69,66 @@ export class TowerManager {
                 return true
             }
             else if (manageType === "SwitchTarget") {
-                if (tower.target === "Closest") {
-                    tower.target = "Lowest Health"
-                }
-                else if (tower.target === "Lowest Health") {
-                    tower.target = "First"
-                }
-                else if (tower.target === "First") {
-                    tower.target = "Closest"
-                }
+                tower.priority += 1
                 return true
+            }
+        }
+    }
+    attackavailable(towerIndex: number, priority: TowerPriority) {
+        const data = GetData(this.userId)
+        const mobs = data?.mobManager.mobs
+        const waypoints = data?.mapManager.waypoints
+        const tower = this.towers[towerIndex]
+        const towerVector = tower.position
+        const range = tower.stats[tower.level].range
+        if (mobs && range && waypoints) {
+            let target: Mob | undefined
+            if (priority === TowerPriority.First) {
+                let firstWayPoint = 0
+                let firstDistance = 0
+                mobs.forEach(mob => {
+                    const mobVector = mob.position
+                    const mobDistance = mobVector.sub(towerVector).Magnitude
+                    if (mobDistance < range) {
+                        if (mob.waypoint >= firstWayPoint) {
+                            const waypoint = waypoints[mob.waypoint]
+                            const waypointVector = new Vector3(waypoint.X, 0, waypoint.Z)
+                            const waypointDistance = waypointVector.sub(mobVector).Magnitude
+                            if (mob.waypoint > firstWayPoint && waypointDistance >= firstDistance) {
+                                target = mob
+                                firstDistance = waypointDistance
+                                firstWayPoint = mob.waypoint
+                            }
+                        }
+                    }
+                })
+            }
+            else if (priority === TowerPriority.Strongest) {
+                let highestHealth: number
+                mobs.forEach(mob => {
+                    const mobVector = mob.position
+                    const mobDistance = mobVector.sub(towerVector).Magnitude
+                    if (mobDistance < range) {
+                        if (mob.health > highestHealth) {
+                            target = mob
+                        }
+                    }
+                })
+            }
+            else if (priority === TowerPriority.Weakest) {
+                let lowestHealth: number
+                mobs.forEach(mob => {
+                    const mobVector = mob.position
+                    const mobDistance = mobVector.sub(towerVector).Magnitude
+                    if (mobDistance < range) {
+                        if (mob.health < lowestHealth) {
+                            target = mob
+                        }
+                    }
+                })
+            }
+            if (target) {
+                return target
             }
         }
     }
