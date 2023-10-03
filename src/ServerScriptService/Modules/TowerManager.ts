@@ -1,20 +1,18 @@
 import { ReplicatedStorage, Workspace } from "@rbxts/services"
 import { GetData } from "ReplicatedStorage/Data"
-import { Minigunner } from "ReplicatedStorage/Towers/Minigunner"
-import { Tower, TowerCard, TowerPriority } from "ReplicatedStorage/Towers/Tower"
-import TowerList from "ReplicatedStorage/Towers/Towers"
 import { Mob } from "./MobManager"
+import { Tower, TowerInfo, TowerPriority } from "ReplicatedStorage/Towers/Towers"
 
 export class TowerManager {
     readonly userId: number
     readonly towerLimit: number
     towers: Array<Tower>
-    cards: Array<TowerCard>
+    cards: Array<TowerInfo>
     constructor(userId: number) {
         this.userId = userId
         this.towerLimit = 20
         this.towers = new Array<Tower>
-        this.cards = new Array<TowerCard>
+        this.cards = new Array<TowerInfo>
     }
     //checks if Placement is valid
     checkPlacement(towerType: string, position: Vector3) {
@@ -30,8 +28,8 @@ export class TowerManager {
     //Places Tower
     place(cardIndex: number, position: Vector3) {
         const card = this.cards[cardIndex]
-        if (this.checkPlacement(card.info.placement.type, position) && this.towers.size() < this.towerLimit) {
-            const clone = ReplicatedStorage.TowerModels.FindFirstChild(card.info.name)
+        if (this.checkPlacement(card.placement.type, position) && this.towers.size() < this.towerLimit) {
+            const clone = ReplicatedStorage.TowerModels.FindFirstChild(card.name)
             if (clone?.IsA("Model")) {
                 clone.GetChildren().forEach(part => {
                     if (part.IsA("BasePart")) {
@@ -43,15 +41,16 @@ export class TowerManager {
                     }
                 });
                 clone.Parent = Workspace
-                const place = new Vector3(position.X, position.Y + card.info.placement.height, position.Z)
+                const place = new Vector3(position.X, position.Y + card.placement.height, position.Z)
                 clone.PivotTo(new CFrame(place))
-                this.towers.push(new card.class(card.info, place, clone))
+                this.towers.push(new Tower(this.userId, card, place, clone))
                 delete this.cards[cardIndex]
                 return true
             }
         }
         return false
     }
+    //manages different types of actions
     manage(manageType: string, towerIndex: number) {
         const coinManager = GetData(this.userId)?.coinManager
         const tower = this.towers[towerIndex]
@@ -74,6 +73,7 @@ export class TowerManager {
             }
         }
     }
+    //checks if attack is available, and if so returns target
     attackavailable(towerIndex: number, priority: TowerPriority) {
         const data = GetData(this.userId)
         const mobs = data?.mobManager.mobs

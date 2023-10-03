@@ -1,5 +1,5 @@
 import { GetData } from "ReplicatedStorage/Data"
-import { Tower, TowerInfo } from "./Tower"
+import { Tower } from "./Towers"
 
 export const MinigunInfo = {
     name: "minigunner",
@@ -50,13 +50,7 @@ export const MinigunInfo = {
         type: "plain",
         height: 3.01,
     },
-}
-
-export class Minigunner extends Tower {
-    constructor(info: TowerInfo, position: Vector3, model: Model) {
-        super(info, position, model)
-    }
-    update() {
+    update: (tower: Tower) => {
 
     }
 }

@@ -1,15 +1,15 @@
-import TowerList from "ReplicatedStorage/Towers/Towers"
+import { TowerList } from "ReplicatedStorage/Towers/Towers"
 import { GetData } from "../../ReplicatedStorage/Data"
-import { Tower, TowerCard } from "ReplicatedStorage/Towers/Tower"
+import { TowerInfo } from "ReplicatedStorage/Towers/Towers"
 
 export class ShopManager {
     readonly userId: number
     reRolled: number
-    shopItems: Array<TowerCard>
+    shopItems: Array<TowerInfo>
     constructor(userId: number) {
         this.userId = userId
         this.reRolled = 0
-        this.shopItems = new Array<TowerCard>
+        this.shopItems = new Array<TowerInfo>
     }
     //ReRolls the cards
     reRoll() {
@@ -35,7 +35,7 @@ export class ShopManager {
         const coinManager = data?.coinManager
         const towerManager = data?.towerManager
         const tower = this.shopItems[pick]
-        const cost = tower.info.stats[0].cost
+        const cost = tower.stats[0].cost
         if (coinManager && coinManager.coin >= cost) {
             coinManager.changeCoins(-cost)
             towerManager?.cards.push(tower)

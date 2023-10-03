@@ -3,12 +3,12 @@ import { ReplicatedStorage } from "@rbxts/services"
 import { GetData } from "../../ReplicatedStorage/Data"
 
 //Data Types sent between functions
-interface MobInfo {
+export interface MobInfo {
     model: string
     maxHealth: number
-    walkspeed: number
+    walkSpeed: number
 }
-interface DamageInfo {
+export interface DamageInfo {
     dealt: number
     dead: boolean
 }
@@ -27,7 +27,7 @@ export class Mob {
         if (model.IsA("Model")) {
             this.model = model
         }
-        this.walkSpeed = mobInfo.walkspeed
+        this.walkSpeed = mobInfo.walkSpeed
         this.maxHealth = mobInfo.maxHealth
         this.health = mobInfo.maxHealth
         this.waypoint = 1
@@ -71,6 +71,7 @@ export class MobManager {
         this.userId = userId
         this.mobs = new Array<Mob>()
     }
+    readonly generationFunctions = [ this.generateDefaultMob, this.generateSpeedMob, this.generateTankMob, this.generateSpecialMob, ]
     //Mob Stat Generation Functions
     generateDefaultMob(weight: number){
         const mob = {

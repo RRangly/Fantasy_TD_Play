@@ -1,7 +1,62 @@
-import { TowerCard } from "./Tower";
-import { MinigunInfo, Minigunner } from "./Minigunner";
+import { MinigunInfo } from "./Minigunner";
 
-const TowerList = new Array<TowerCard>()
-TowerList[0] = {class: Minigunner, info: MinigunInfo}
+//Interfaces for managing towers
+interface towerLevel {
+    readonly levelName: string
+    readonly cost: number
+    readonly damage?: number
+    readonly preAction?: number
+    readonly actionInterval?: number
+    readonly range?: number
+}
 
-export = TowerList
+export interface TowerInfo {
+    readonly name: string
+    readonly stats: Array<towerLevel>
+    readonly placement: {
+        area: number,
+        type: string,
+        height: number,
+    }
+    readonly update: (tower: Tower) => void
+}
+
+export enum TowerPriority {
+    First = 0,
+    Strongest = 1,
+    Weakest = 2,
+}
+
+//Base class for all towers
+export class Tower {
+    readonly userId: number
+    readonly name: string
+    readonly stats: Array<towerLevel>
+    readonly placement: {
+        area: number,
+        type: string,
+        height: number,
+    }
+    readonly _update: (tower: Tower) => void
+    level: number
+    position: Vector3
+    model: Model
+    priority: TowerPriority
+    constructor(userId: number, info: TowerInfo, position: Vector3, model: Model) {
+        this.userId = userId
+        this.name = info.name
+        this.stats = info.stats
+        this.placement = info.placement
+        this._update = info.update
+        this.level = 0
+        this.position = position
+        this.model = model
+        this.priority = TowerPriority.First
+    }
+    update() {
+        return this._update(this)
+    }
+}
+
+export const TowerList = new Array<TowerInfo>()
+TowerList[0] = MinigunInfo
