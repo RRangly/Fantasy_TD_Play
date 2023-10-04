@@ -26,7 +26,7 @@ export class TraitsManager {
             for (let i = 0; i < 3; i++) {
                 if (i === index) {
                     const event = this.traitSel[i].event
-                    if (this.traits.get(event) === null) {
+                    if (!this.traits.get(event)) {
                         this.traits.set(event, new Array<Trait>)
                     }
                     this.traits.get(event)?.push(new Trait(this.userId, this.traitSel[i]))
@@ -35,8 +35,8 @@ export class TraitsManager {
         }
     }
     //Invokes Traits when a event occurs
-    invoke(type: string, info: object) {
-        const list = this.traits.get(type)
+    invoke(eventType: string, info: object) {
+        const list = this.traits.get(eventType)
         if(list) {
             for (let i = 0; i < list.size() - 1; i++) {
                 list[i].update(info)

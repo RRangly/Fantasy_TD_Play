@@ -50,7 +50,11 @@ export const MinigunInfo = {
         type: "plain",
         height: 3.01,
     },
-    update: (tower: Tower) => {
-
+    update: (tower: Tower, deltaTime: number) => {
+        return {
+            mobIndex: 1,
+            dead: false,
+            damage: 1,
+        }
     }
 }

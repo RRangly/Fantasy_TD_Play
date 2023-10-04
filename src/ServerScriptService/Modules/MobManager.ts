@@ -30,7 +30,7 @@ export class Mob {
         this.walkSpeed = mobInfo.walkSpeed
         this.maxHealth = mobInfo.maxHealth
         this.health = mobInfo.maxHealth
-        this.waypoint = 1
+        this.waypoint = 0
         this.frozen = false
         this.position = new Vector3(spawn.X, 0, spawn.Z)
     }
@@ -71,7 +71,7 @@ export class MobManager {
         this.userId = userId
         this.mobs = new Array<Mob>()
     }
-    readonly generationFunctions = [ this.generateDefaultMob, this.generateSpeedMob, this.generateTankMob, this.generateSpecialMob, ]
+    readonly generationFunctions = [ (weight: number) => this.generateDefaultMob(weight), (weight: number) => this.generateSpeedMob(weight), (weight: number) => this.generateTankMob(weight), (weight: number) => this.generateSpecialMob(weight), ]
     //Mob Stat Generation Functions
     generateDefaultMob(weight: number){
         const mob = {
@@ -129,5 +129,35 @@ export class MobManager {
     }
     freeze(mobIndex: number, length: number) {
         this.mobs[mobIndex].freeze(length)
+    }
+    //calculate Mob's movement
+    movement(mobIndex: number, deltaTime: number) {
+        const waypoints = GetData(this.userId)?.mapManager.waypoints
+        if (waypoints) {
+            const mob = this.mobs[mobIndex]
+            let distance = mob.walkSpeed * deltaTime
+            let position = mob.position
+            let dest = mob.waypoint
+            while (distance > 0) {
+                const waypoint = waypoints[dest]
+                const next = waypoints[dest + 1]
+                if (!next) {
+                    position = waypoint
+                    distance = 0
+                }
+                const wpDistance = next.sub(position).Magnitude
+                if (wpDistance > distance) {
+                    position = next.sub(position).Unit.mul(distance)
+                    distance = 0
+                }
+                else {
+                    dest += 1
+                    position = next
+                    distance -= wpDistance
+                }
+            }
+            mob.position = position
+            mob.waypoint = dest
+        }
     }
 }

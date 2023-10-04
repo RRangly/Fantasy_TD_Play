@@ -10,6 +10,12 @@ interface towerLevel {
     readonly range?: number
 }
 
+export interface AttackInfo {
+    readonly mobIndex: number
+    readonly dead: boolean
+    readonly damage: number
+}
+
 export interface TowerInfo {
     readonly name: string
     readonly stats: Array<towerLevel>
@@ -18,7 +24,7 @@ export interface TowerInfo {
         type: string,
         height: number,
     }
-    readonly update: (tower: Tower) => void
+    readonly update: (tower: Tower, deltaTime: number) => AttackInfo
 }
 
 export enum TowerPriority {
@@ -37,7 +43,7 @@ export class Tower {
         type: string,
         height: number,
     }
-    readonly _update: (tower: Tower) => void
+    readonly _update: (tower: Tower, deltaTime: number) => AttackInfo
     level: number
     position: Vector3
     model: Model
@@ -53,8 +59,8 @@ export class Tower {
         this.model = model
         this.priority = TowerPriority.First
     }
-    update() {
-        return this._update(this)
+    update(deltaTime: number) {
+        return this._update(this, deltaTime)
     }
 }
 

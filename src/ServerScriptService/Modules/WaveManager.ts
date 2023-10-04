@@ -49,10 +49,10 @@ export class WaveManager {
         }
         const mobWeight = math.floor(weight / 28)
         let toSpawn = new Array<MobInfo>()
-        for (let type = 0; type < 4; type++) {
-            const mobAmount = math.ceil(totalMob * mobDis[type])
+        for (let mobType = 0; mobType < 4; mobType++) {
+            const mobAmount = math.ceil(totalMob * mobDis[mobType])
             for (let i = 0; i < mobAmount; i++) {
-                const mob = mobManager?.generationFunctions[type](mobWeight)
+                const mob = mobManager?.generationFunctions[mobType](mobWeight)
                 if (mob) {
                     toSpawn.push(mob)
                 }
