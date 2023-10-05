@@ -58,9 +58,10 @@ const GameService = KnitServer.CreateService({
 
     Client: {
         GameLoaded: new RemoteSignal<() => void>(),
-        PlaceTower: new RemoteSignal<(towerIndex: unknown, position: unknown) => void>(),
+        PlaceTower: new RemoteSignal<(index: unknown, position: unknown) => void>(),
         ManageTower: new RemoteSignal<(manageType: unknown, towerIndex: unknown) => void>(),
-        ManageShop: new RemoteSignal<(manageType: unknown, index?: unknown) => void>()
+        ManageShop: new RemoteSignal<(manageType: unknown, index?: unknown) => void>(),
+        GameUpdate: new RemoteSignal<() => void>()
     },
     
     KnitInit() {
@@ -78,14 +79,27 @@ const GameService = KnitServer.CreateService({
                 }
             })
         })
+        this.Client.PlaceTower.Connect((player: Player, index: unknown, position: unknown) => {
+            const data = GetData(player.UserId)
+            if (data?.towerManager && t.number(index) && t.Vector3(position)) {
+                if (data.towerManager.place(index, position)) {
+                    this.Client.GameUpdate.Fire(player)
+                }
+            }
+        })
+        this.Client.ManageTower.Connect((player:Player, manageType: unknown, towerIndex: unknown) => {
+            const data = GetData(player.UserId)
+            if(data?.towerManager && t.string(manageType) && t.number(towerIndex)) {
+                if (data.towerManager.manage(manageType, towerIndex)) {
+                    this.Client.GameUpdate.Fire(player)
+                }
+            }
+        })
         this.Client.ManageShop.Connect((player: Player, manageType: unknown, index?: unknown) => {
             const data = GetData(player.UserId)
             if (data?.shopManager && t.string(manageType)) {
-                if (manageType === "Pick" && t.number(index)) {
-                    data.shopManager.pick(index)
-                }
-                else if (manageType === "ReRoll") {
-                    data.shopManager.reRoll()
+                if (data.shopManager.manage(manageType, index)) {
+                    this.Client.GameUpdate.Fire(player)
                 }
             }
         })

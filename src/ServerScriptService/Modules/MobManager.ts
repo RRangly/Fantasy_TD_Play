@@ -8,8 +8,15 @@ export interface MobInfo {
     maxHealth: number
     walkSpeed: number
 }
-export interface DamageInfo {
-    dealt: number
+
+interface DamageInfo {
+    damage: number
+    dead: boolean
+}
+
+export interface AttackInfo {
+    mobIndex: number
+    damage: number
     dead: boolean
 }
 
@@ -39,11 +46,11 @@ export class Mob {
         this.health -= damage
         if (this.health <= 0) {
             this.health = 0
-            const attack = {dealt: preHealth, dead: true}
+            const attack = {damage: preHealth, dead: true}
             return attack
         }
         else {
-            const attack = {dealt: damage, dead: false}
+            const attack = {damage: damage, dead: false}
             return attack
         }
     }
@@ -122,9 +129,14 @@ export class MobManager {
     takeDamage(mobIndex: number, damage: number) {
         const coinManager = GetData(this.userId)?.coinManager
         const info = (this.mobs[mobIndex].takeDamage(damage))
-        coinManager?.changeCoins(info.dealt)
+        coinManager?.changeCoins(info.damage)
         if (info.dead) {
             this.mobs.remove(mobIndex)
+        }
+        return {
+            mobIndex: mobIndex,
+            damage: info.damage,
+            dead: info.dead
         }
     }
     freeze(mobIndex: number, length: number) {

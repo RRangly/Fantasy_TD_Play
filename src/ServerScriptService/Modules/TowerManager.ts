@@ -72,6 +72,7 @@ export class TowerManager {
                 return true
             }
         }
+        return false
     }
     //checks if attack is available, and if so returns target
     attackavailable(towerIndex: number, priority: TowerPriority) {
