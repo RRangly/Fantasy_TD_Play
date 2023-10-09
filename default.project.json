@@ -32,7 +32,7 @@
 			"StarterPlayerScripts": {
 				"$className": "StarterPlayerScripts",
 				"TS": {
-					"$path": "out/StarterPlayerScripts"
+					"$path": "out/StarterPlayer/StarterPlayerScripts"
 				}
 			}
 		},

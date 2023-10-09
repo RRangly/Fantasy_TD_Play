@@ -152,19 +152,19 @@ export class MobManager {
             let dest = mob.waypoint
             while (distance > 0) {
                 const waypoint = waypoints[dest]
-                const next = waypoints[dest + 1]
-                if (!next) {
+                const nextWp = waypoints[dest + 1]
+                if (!nextWp) {
                     position = waypoint
                     distance = 0
                 }
-                const wpDistance = next.sub(position).Magnitude
+                const wpDistance = nextWp.sub(position).Magnitude
                 if (wpDistance > distance) {
-                    position = next.sub(position).Unit.mul(distance)
+                    position = nextWp.sub(position).Unit.mul(distance)
                     distance = 0
                 }
                 else {
                     dest += 1
-                    position = next
+                    position = nextWp
                     distance -= wpDistance
                 }
             }

@@ -61,7 +61,8 @@ const GameService = KnitServer.CreateService({
         PlaceTower: new RemoteSignal<(index: unknown, position: unknown) => void>(),
         ManageTower: new RemoteSignal<(manageType: unknown, towerIndex: unknown) => void>(),
         ManageShop: new RemoteSignal<(manageType: unknown, index?: unknown) => void>(),
-        GameUpdate: new RemoteSignal<() => void>()
+        TowerUpdate: new RemoteSignal<(towerManager: TowerManager) => void>(),
+        ShopUpdate: new RemoteSignal<() => void>(),
     },
     
     KnitInit() {
@@ -83,7 +84,7 @@ const GameService = KnitServer.CreateService({
             const data = GetData(player.UserId)
             if (data?.towerManager && t.number(index) && t.Vector3(position)) {
                 if (data.towerManager.place(index, position)) {
-                    this.Client.GameUpdate.Fire(player)
+                    this.Client.TowerUpdate.Fire(player)
                 }
             }
         })
@@ -91,7 +92,7 @@ const GameService = KnitServer.CreateService({
             const data = GetData(player.UserId)
             if(data?.towerManager && t.string(manageType) && t.number(towerIndex)) {
                 if (data.towerManager.manage(manageType, towerIndex)) {
-                    this.Client.GameUpdate.Fire(player)
+                    this.Client.TowerUpdate.Fire(player)
                 }
             }
         })
@@ -99,7 +100,7 @@ const GameService = KnitServer.CreateService({
             const data = GetData(player.UserId)
             if (data?.shopManager && t.string(manageType)) {
                 if (data.shopManager.manage(manageType, index)) {
-                    this.Client.GameUpdate.Fire(player)
+                    this.Client.ShopUpdate.Fire(player)
                 }
             }
         })
