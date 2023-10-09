@@ -61,7 +61,7 @@ const GameService = KnitServer.CreateService({
         PlaceTower: new RemoteSignal<(index: unknown, position: unknown) => void>(),
         ManageTower: new RemoteSignal<(manageType: unknown, towerIndex: unknown) => void>(),
         ManageShop: new RemoteSignal<(manageType: unknown, index?: unknown) => void>(),
-        TowerUpdate: new RemoteSignal<(towerManager: TowerManager) => void>(),
+        TowerUpdate: new RemoteSignal<() => void>(),
         ShopUpdate: new RemoteSignal<() => void>(),
     },
     

@@ -8,6 +8,14 @@ interface ReplicatedStorage extends Instance {
     },
     MobModels: Folder,
     TowerModels: Folder,
+    GuiAssets: Folder & {
+        SelectFrame: Frame,
+        TowerFrame: Frame,
+        ShopMenu: Frame,
+    }
+    ClientAssets: Folder & {
+        RangeDisplay: Frame,
+    }
 }
 
 interface Workspace extends Instance {

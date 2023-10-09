@@ -7,15 +7,28 @@ import { Tower } from "ReplicatedStorage/Towers/Towers";
 
 const Player = Players.LocalPlayer
 const GameService = KnitClient.GetService("GameService")
+const UserId = Player.UserId
 
 interface Client {
     TowerClient: TowerClient
 }
 
-Player.CharacterAdded.Connect(() => {
+if (Player.Character) {
     GameService.GameLoaded.Fire()
-    const data: Client = {
-        TowerClient: new TowerClient()
+}
+else {
+    Player.CharacterAdded.Once(() => {
+        GameService.GameLoaded.Fire()
+    })
+}
+
+Player.CharacterAdded.Connect(() => {
+    const Data = GetData(UserId)
+    if (!Data) {
+        return
     }
-    GameService.TowerUpdate.Connect(data.TowerClient.update)
+    const clientObj: Client = {
+        TowerClient: new TowerClient(Data.towerManager)
+    }
+    clientObj.TowerClient.update(Data.towerManager)
 })
