@@ -12,7 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "@rbxts/compiler-types": "^2.1.1-types.0",
-    "@rbxts/types": "^1.0.716",
+    "@rbxts/types": "^1.0.720",
     "@typescript-eslint/eslint-plugin": "^6.7.3",
     "@typescript-eslint/parser": "^6.7.3",
     "eslint": "^8.50.0",
