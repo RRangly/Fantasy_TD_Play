@@ -28,7 +28,10 @@ Player.CharacterAdded.Connect(() => {
         return
     }
     const clientObj: Client = {
-        TowerClient: new TowerClient(Data.towerManager)
+        TowerClient: new TowerClient({
+            towerManager: Data.towerManager,
+            shopManager: Data.shopManager,
+        })
     }
     clientObj.TowerClient.update(Data.towerManager)
 })

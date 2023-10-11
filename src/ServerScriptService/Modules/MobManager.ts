@@ -28,6 +28,7 @@ export class Mob {
     health: number
     waypoint: number
     position: Vector3
+    position2D: Vector2
     frozen: boolean
     constructor(mobInfo: MobInfo, spawn: Vector3) {
         const model = ReplicatedStorage.WaitForChild(mobInfo.model)
@@ -39,7 +40,8 @@ export class Mob {
         this.health = mobInfo.maxHealth
         this.waypoint = 0
         this.frozen = false
-        this.position = new Vector3(spawn.X, 0, spawn.Z)
+        this.position = spawn
+        this.position2D = new Vector2(spawn.X, spawn.Z)
     }
     takeDamage(damage: number) {
         const preHealth = this.health
@@ -169,6 +171,7 @@ export class MobManager {
                 }
             }
             mob.position = position
+            mob.position2D = new Vector2(position.X, position.Z)
             mob.waypoint = dest
         }
     }

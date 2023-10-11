@@ -46,6 +46,7 @@ export class Tower {
     readonly _update: (tower: Tower, deltaTime: number) => AttackInfo
     level: number
     position: Vector3
+    position2D: Vector2
     model: Model
     priority: TowerPriority
     constructor(userId: number, info: TowerInfo, position: Vector3, model: Model) {
@@ -56,6 +57,7 @@ export class Tower {
         this._update = info.update
         this.level = 0
         this.position = position
+        this.position2D = new Vector2(position.X, position.Z)
         this.model = model
         this.priority = TowerPriority.First
     }

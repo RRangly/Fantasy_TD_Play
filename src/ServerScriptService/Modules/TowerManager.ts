@@ -80,7 +80,7 @@ export class TowerManager {
         const mobs = data?.mobManager.mobs
         const waypoints = data?.mapManager.waypoints
         const tower = this.towers[towerIndex]
-        const towerVector = tower.position
+        const towerVector = tower.position2D
         const range = tower.stats[tower.level].range
         if (mobs && range && waypoints) {
             let target: Mob | undefined
@@ -88,12 +88,12 @@ export class TowerManager {
                 let firstWayPoint = 0
                 let firstDistance = 0
                 mobs.forEach(mob => {
-                    const mobVector = mob.position
+                    const mobVector = mob.position2D
                     const mobDistance = mobVector.sub(towerVector).Magnitude
                     if (mobDistance < range) {
                         if (mob.waypoint >= firstWayPoint) {
                             const waypoint = waypoints[mob.waypoint]
-                            const waypointVector = new Vector3(waypoint.X, 0, waypoint.Z)
+                            const waypointVector = new Vector2(waypoint.X, waypoint.Z)
                             const waypointDistance = waypointVector.sub(mobVector).Magnitude
                             if (mob.waypoint > firstWayPoint && waypointDistance >= firstDistance) {
                                 target = mob
@@ -107,7 +107,7 @@ export class TowerManager {
             else if (priority === TowerPriority.Strongest) {
                 let highestHealth: number
                 mobs.forEach(mob => {
-                    const mobVector = mob.position
+                    const mobVector = mob.position2D
                     const mobDistance = mobVector.sub(towerVector).Magnitude
                     if (mobDistance < range) {
                         if (mob.health > highestHealth) {
@@ -119,7 +119,7 @@ export class TowerManager {
             else if (priority === TowerPriority.Weakest) {
                 let lowestHealth: number
                 mobs.forEach(mob => {
-                    const mobVector = mob.position
+                    const mobVector = mob.position2D
                     const mobDistance = mobVector.sub(towerVector).Magnitude
                     if (mobDistance < range) {
                         if (mob.health < lowestHealth) {

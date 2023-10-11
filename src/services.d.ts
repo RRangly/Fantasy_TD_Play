@@ -14,7 +14,7 @@ interface ReplicatedStorage extends Instance {
         ShopMenu: Frame,
     }
     ClientAssets: Folder & {
-        RangeDisplay: Frame,
+        RangeDisplay: BasePart,
     }
 }
 
