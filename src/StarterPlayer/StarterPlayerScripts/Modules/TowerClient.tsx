@@ -4,8 +4,9 @@ import type { TowerManager } from "ServerScriptService/Modules/TowerManager";
 import type { ShopManager } from "ServerScriptService/Modules/ShopManager";
 import { Tower, TowerList } from "ReplicatedStorage/Towers/Towers";
 import { Player } from "@rbxts/knit/Knit/KnitClient";
+import { GuiAssets } from "ReplicatedStorage/Game/GuiAssets";
+import { KnitServer } from "@rbxts/knit";
 const TowerModels = ReplicatedStorage.TowerModels
-const GuiAssets = ReplicatedStorage.GuiAssets
 const ClientAssets = ReplicatedStorage.ClientAssets
 
 interface UIProps {
@@ -16,6 +17,7 @@ interface UIProps {
 interface UIState {
     shopManager: ShopManager,
     towerManager: TowerManager,
+    currentShop: string,
     selected?: number,
 }
 
@@ -32,12 +34,14 @@ function SelectFrame(props: FrameProp) {
 }
 
 export class TowerClient extends Roact.Component<UIProps, UIState> {
+    
     selectFrame?: Frame
     placing?: number
     rangeDisplay?: BasePart
     state: Readonly<UIState> = {
         shopManager: this.props.shopManager,
         towerManager: this.props.towerManager,
+        currentShop: "Towers"
     }
     
     constructor(props: UIProps) {
@@ -63,9 +67,9 @@ export class TowerClient extends Roact.Component<UIProps, UIState> {
         }
         this.selectFrame?.Destroy()
         if (towerIndex) {
-            const clone = GuiAssets.SelectFrame.Clone()
-            this.selectFrame = clone
-            clone.Parent = Player
+            //const clone = GuiAssets.SelectFrame.Clone()
+            //this.selectFrame = clone
+            //clone.Parent = Player
             const tower = towers[towerIndex]
             const towerInfo = TowerList[towerIndex]
             const levelStat = towerInfo.stats[tower.level]
@@ -93,20 +97,45 @@ export class TowerClient extends Roact.Component<UIProps, UIState> {
 
     }
     render(): Roact.Element | undefined {
-        return (<frame Key={"HudFrame"}>
-            <uiaspectratioconstraint AspectType={"FitWithinMaxSize"} AspectRatio={1.783} DominantAxis={"Width"} />
-            <imagelabel 
-            Key= "ShopFrame"
-            Image= "rbxassetid://14886161433"
-            Size={new UDim2(0.55, 0, 0.25, 0)}
-            Position={new UDim2(0.5, 0, 1, 0)}
-            ScaleType= "Crop">
+        return (<GuiAssets.baseFrame>
+            <GuiAssets.imageFrame key= "ShopFrame" image= "rbxassetid://14886161433" size={new UDim2(0.55,0,0.25,0)} position={new UDim2(0.5,0,1,0)} anchorPoint={new Vector2(0.5,1)}>
+                <GuiAssets.imageButton
+                key="ReRoll"
+                image="rbxassetid://14886174309"
+                size={new UDim2(0.715, 0, 0.45, 0)}
+                position={new UDim2(0.245, 0, 0.22, 0)}
+                anchorPoint={new Vector2(0, 0)}
+                maxTextSize={22}
+                text1="ReRoll"
+                text2={tostring(math.floor(1.1 ^ this.state.shopManager.reRolled * 115))}
+                event={function() {
+                    
+                }}>
+                </GuiAssets.imageButton>
 
-            </imagelabel>
-            <imagelabel Key={"HealthBar"}>
-                
-            </imagelabel>
-        </frame>)
+                <GuiAssets.imageButton 
+                key="SwitchShop"
+                image="rbxassetid://14886174309"
+                size={new UDim2(0.715, 0, 0.675, 0)}
+                position={new UDim2(0.245, 0, 0.22, 0)}
+                anchorPoint={new Vector2(0, 0)}
+                maxTextSize={22}
+                text1="SwitchShop"
+                text2={this.state.currentShop}
+                event={() => {
+                    if (this.state.currentShop === "Towers") {
+                        this.setState({
+                            currentShop: "Items"
+                        })
+                    }
+                    else {
+                        this.setState({
+                            currentShop: "Towers"
+                        })
+                    }
+                }}>
+                </GuiAssets.imageButton>
+            </GuiAssets.imageFrame>
+        </GuiAssets.baseFrame>)
     }
-
 }
