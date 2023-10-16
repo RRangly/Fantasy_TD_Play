@@ -18,6 +18,7 @@ export interface AttackInfo {
 
 export interface TowerInfo {
     readonly name: string
+    readonly cost: number
     readonly stats: Array<towerLevel>
     readonly placement: {
         area: number,

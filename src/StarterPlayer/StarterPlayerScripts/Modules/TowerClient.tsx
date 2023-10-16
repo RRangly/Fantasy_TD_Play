@@ -1,13 +1,14 @@
-import Roact from "@rbxts/roact";
+import Roact, { Event } from "@rbxts/roact";
 import { ReplicatedStorage, TweenService } from "@rbxts/services";
 import type { TowerManager } from "ServerScriptService/Modules/TowerManager";
 import type { ShopManager } from "ServerScriptService/Modules/ShopManager";
 import { Tower, TowerList } from "ReplicatedStorage/Towers/Towers";
-import { Player } from "@rbxts/knit/Knit/KnitClient";
 import { GuiAssets } from "ReplicatedStorage/Game/GuiAssets";
-import { KnitServer } from "@rbxts/knit";
+import { KnitClient } from "@rbxts/knit";
+
 const TowerModels = ReplicatedStorage.TowerModels
 const ClientAssets = ReplicatedStorage.ClientAssets
+const GameService = KnitClient.GetService("GameService")
 
 interface UIProps {
     shopManager: ShopManager
@@ -15,26 +16,13 @@ interface UIProps {
 }
 
 interface UIState {
-    shopManager: ShopManager,
-    towerManager: TowerManager,
-    currentShop: string,
-    selected?: number,
-}
-
-interface FrameProp {
-    tower: Tower
-}
-
-function SelectFrame(props: FrameProp) {
-    return (
-        <imagelabel>
-
-        </imagelabel>
-    )
+    shopManager: ShopManager
+    towerManager: TowerManager
+    currentShop: string
+    selected?: number
 }
 
 export class TowerClient extends Roact.Component<UIProps, UIState> {
-    
     selectFrame?: Frame
     placing?: number
     rangeDisplay?: BasePart
@@ -108,33 +96,25 @@ export class TowerClient extends Roact.Component<UIProps, UIState> {
                 maxTextSize={22}
                 text1="ReRoll"
                 text2={tostring(math.floor(1.1 ^ this.state.shopManager.reRolled * 115))}
-                event={function() {
-                    
-                }}>
-                </GuiAssets.imageButton>
-
-                <GuiAssets.imageButton 
-                key="SwitchShop"
+                event={function () {
+                }}/>
+                <GuiAssets.imageButton
+                key="Purchase XP"
                 image="rbxassetid://14886174309"
                 size={new UDim2(0.715, 0, 0.675, 0)}
                 position={new UDim2(0.245, 0, 0.22, 0)}
                 anchorPoint={new Vector2(0, 0)}
                 maxTextSize={22}
-                text1="SwitchShop"
-                text2={this.state.currentShop}
+                text1="Purchase XP"
+                text2={"20"}
                 event={() => {
-                    if (this.state.currentShop === "Towers") {
-                        this.setState({
-                            currentShop: "Items"
-                        })
-                    }
-                    else {
-                        this.setState({
-                            currentShop: "Towers"
-                        })
-                    }
-                }}>
-                </GuiAssets.imageButton>
+
+                }}/>
+                <>
+                    {...GuiAssets.shopFrames({shopManager: this.state.shopManager, event(index: number) {
+                        GameService.ManageShop.Fire("Pick", index)
+                    }})}
+                </>
             </GuiAssets.imageFrame>
         </GuiAssets.baseFrame>)
     }
