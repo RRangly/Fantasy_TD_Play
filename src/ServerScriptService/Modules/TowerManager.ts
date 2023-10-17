@@ -6,15 +6,13 @@ import { Tower, TowerInfo, TowerPriority } from "ReplicatedStorage/Towers/Towers
 export class TowerManager {
     readonly userId: number
     readonly towerLimit: number
-    level: number
-    xp: number
+    energy: number
     towers: Array<Tower>
     cards: Array<TowerInfo>
     constructor(userId: number) {
         this.userId = userId
-        this.towerLimit = 3
-        this.level = 0
-        this.xp = 0
+        this.towerLimit = 20
+        this.energy = 10
         this.towers = new Array<Tower>
         this.cards = new Array<TowerInfo>
     }

@@ -16,12 +16,19 @@ interface imageButtonProps extends imageFrameProps{
     event: () => void
 }
 
-interface SelectFrameProp {
+interface SelectFrameProps {
     text1: string
     text2: string
     image: string
     index: number
     event: () => void
+}
+
+interface buttonTextProps {
+    maxTextSize: number
+    size: UDim2
+    position: UDim2
+    text: string
 }
 
 export const GuiAssets = {
@@ -33,7 +40,7 @@ export const GuiAssets = {
             </frame>
         </screengui>)
     },
-    buttonText(props: {maxTextSize: number, size: UDim2, position: UDim2, text: string}) {
+    buttonText(props: buttonTextProps) {
         return (<textlabel
             Size={props.size} 
             Position={props.position} 
@@ -78,7 +85,7 @@ export const GuiAssets = {
         </imagebutton>)
     },
     //ShopManager Gui Assets
-    selectFrame(props: SelectFrameProp): Roact.Element {
+    selectFrame(props: SelectFrameProps): Roact.Element {
         return (
             <imagebutton
             Key={tostring(props.index)}
@@ -124,22 +131,5 @@ export const GuiAssets = {
                 </textlabel>
             </imagebutton>
         )
-    },
-    
-    shopFrames(props: {shopManager: ShopManager, event: (index: number) => void}): Array<Roact.Element> {
-        let frames = []
-        const cards = props.shopManager.shopItems
-        for (let i = 0; i < 3; i++) {
-            frames[i] = (<this.selectFrame
-            image="NotYet"
-            text1={cards[i].name}
-            text2={tostring(cards[i].cost)}
-            index={i}
-            event={() => {
-                props.event(i)
-            }}
-            />)
-        }
-        return frames
-    },
+    }
 }

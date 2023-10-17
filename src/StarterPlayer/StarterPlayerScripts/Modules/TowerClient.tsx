@@ -1,4 +1,4 @@
-import Roact, { Event } from "@rbxts/roact";
+import Roact, { Element, Event } from "@rbxts/roact";
 import { ReplicatedStorage, TweenService } from "@rbxts/services";
 import type { TowerManager } from "ServerScriptService/Modules/TowerManager";
 import type { ShopManager } from "ServerScriptService/Modules/ShopManager";
@@ -20,6 +20,55 @@ interface UIState {
     towerManager: TowerManager
     currentShop: string
     selected?: number
+}
+
+function shopFrames(shopManager: ShopManager): Roact.Element {
+    const shopItems = shopManager.shopItems
+    let frames = []
+    for (let i = 0; i < 3; i++) {
+        frames[i] = (<GuiAssets.selectFrame
+        image="NotYet"
+        text1={shopItems[i].name}
+        text2={tostring(shopItems[i].cost)}
+        index={i}
+        event={() => {
+            GameService.ManageShop.Fire("Pick", i)
+        }}
+        />)
+    }
+    return <>
+    {frames}
+    </>
+}
+
+function cardsFrame(towerManager:TowerManager): Roact.Element {
+    const cards = towerManager.cards
+    let frames = []
+    for (let i = 0; i < cards.size(); i++) {
+        frames[i] = <GuiAssets.imageFrame
+        key={tostring(i)}
+        image="rbxassetid://14886195550"
+        size={new UDim2(0.1, 0, 1, 0)}
+        position={new UDim2(0.1 * i, 0, 0, 0)}
+        anchorPoint={new Vector2(0,0)}
+        >
+            <imagelabel
+            Key={"TowerImage"}
+            Image="NotReady"
+            AnchorPoint={new Vector2(0.5, 0.5)}
+            Size={new UDim2(0.8, 0, 0.8, 0)}
+            Position={new UDim2(0.5, 0, 0.5, 0)}
+            BackgroundTransparency={1}/>
+        </GuiAssets.imageFrame>
+    }
+    return (
+    <frame
+    Key="Cards"
+    Size={new UDim2(0.9, 0, 0.34, 0)}
+    Position={new UDim2(0.04, 0, 0.05, 0)}
+    BackgroundTransparency={1}>
+        {...frames}
+    </frame>)
 }
 
 export class TowerClient extends Roact.Component<UIProps, UIState> {
@@ -98,24 +147,12 @@ export class TowerClient extends Roact.Component<UIProps, UIState> {
                 text2={tostring(math.floor(1.1 ^ this.state.shopManager.reRolled * 115))}
                 event={function () {
                 }}/>
-                <GuiAssets.imageButton
-                key="Purchase XP"
-                image="rbxassetid://14886174309"
-                size={new UDim2(0.715, 0, 0.675, 0)}
-                position={new UDim2(0.245, 0, 0.22, 0)}
-                anchorPoint={new Vector2(0, 0)}
-                maxTextSize={22}
-                text1="Purchase XP"
-                text2={"20"}
-                event={() => {
-
-                }}/>
-                <>
-                    {...GuiAssets.shopFrames({shopManager: this.state.shopManager, event(index: number) {
-                        GameService.ManageShop.Fire("Pick", index)
-                    }})}
-                </>
+                {shopFrames(this.state.shopManager)}
+                {cardsFrame(this.state.towerManager)}
             </GuiAssets.imageFrame>
+            {this.state.selected ? <GuiAssets.imageFrame key="ShopFrame" image="rbxassetid://14886161433" size={new UDim2(0.195,0,0.455,0)} position={new UDim2(1,0,1,0)} anchorPoint={new Vector2(1,1)}>
+                
+            </GuiAssets.imageFrame>: undefined}
         </GuiAssets.baseFrame>)
     }
 }

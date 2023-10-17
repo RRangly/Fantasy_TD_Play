@@ -3,6 +3,7 @@ import { Tower } from "./Towers"
 
 export const MinigunInfo = {
     name: "minigunner",
+    cost: 500,
     stats : [
         {
             levelName: "basic",
