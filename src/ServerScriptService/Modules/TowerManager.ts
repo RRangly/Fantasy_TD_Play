@@ -12,7 +12,7 @@ export class TowerManager {
     constructor(userId: number) {
         this.userId = userId
         this.towerLimit = 20
-        this.energy = 10
+        this.energy = 50
         this.towers = new Array<Tower>
         this.cards = new Array<TowerInfo>
     }

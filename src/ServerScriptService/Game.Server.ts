@@ -44,6 +44,7 @@ export class TDPlayer {
     }
     update(deltaTime: number) {
         for(let i = 0; i < this.towerManager.towers.size(); i++) {
+            if(this.towerManager.energy < 0) break
             const att = this.towerManager.towers[i].update(deltaTime)
             this.traitsManager.invoke("MobDamage", att)
         }
