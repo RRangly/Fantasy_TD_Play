@@ -1,5 +1,5 @@
 //Manages and Saves Player Datas
-import type { TDPlayer } from "ServerScriptService/Game.Server";
+import type { TDPlayer } from "ServerScriptService/Game.server"
 
 const Data = new Map<number, TDPlayer>()
 

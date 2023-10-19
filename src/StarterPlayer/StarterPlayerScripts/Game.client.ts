@@ -1,7 +1,6 @@
 import { KnitClient } from "@rbxts/knit";
 import { Players, ReplicatedStorage } from "@rbxts/services";
 import { GetData } from "ReplicatedStorage/Data";
-import type { TDPlayer } from "ServerScriptService/Game.Server";
 import { TowerClient } from "./Modules/TowerClient";
 import { Tower } from "ReplicatedStorage/Towers/Towers";
 
@@ -31,6 +30,7 @@ Player.CharacterAdded.Connect(() => {
         TowerClient: new TowerClient({
             towerManager: Data.towerManager,
             shopManager: Data.shopManager,
+            coinManager: Data.coinManager,
         })
     }
     clientObj.TowerClient.update(Data.towerManager)

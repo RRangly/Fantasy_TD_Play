@@ -20,4 +20,5 @@ interface ReplicatedStorage extends Instance {
 
 interface Workspace extends Instance {
     Map: Folder,
+    Mobs: Folder,
 }

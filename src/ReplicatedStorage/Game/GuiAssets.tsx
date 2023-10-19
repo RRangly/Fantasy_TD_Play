@@ -45,7 +45,8 @@ export const GuiAssets = {
             Size={props.size} 
             Position={props.position} 
             BackgroundTransparency={1} 
-            FontFace={new Font("SpecialElite", Enum.FontWeight.Regular, Enum.FontStyle.Normal)} 
+            FontFace={new Font("SpecialElite", Enum.FontWeight.Regular, Enum.FontStyle.Normal)}
+            Text={props.text}
             TextScaled = {true}
             TextXAlignment={"Center"}
             TextYAlignment={"Top"}
@@ -85,7 +86,7 @@ export const GuiAssets = {
         </imagebutton>)
     },
     //ShopManager Gui Assets
-    selectFrame(props: SelectFrameProps): Roact.Element {
+    shopSelFrame(props: SelectFrameProps): Roact.Element {
         return (
             <imagebutton
             Key={tostring(props.index)}

@@ -28,9 +28,9 @@ export class WaveManager {
         const traitsManager = data?.traitsManager
 
         this.currentWave += 1
-        if (this.currentWave % 5) {
-            traitsManager?.newTraits()
-        }
+        //if (this.currentWave % 5) {
+        //    traitsManager?.newTraits()
+        //}
         const weight = 1.095^this.currentWave * 100
         const waveType = math.random(1, 10)
         let mobDis: Array<number>
@@ -48,6 +48,7 @@ export class WaveManager {
             mobDis = distributions[2]
         }
         const mobWeight = math.floor(weight / 28)
+        print("TotalMob", totalMob)
         let toSpawn = new Array<MobInfo>()
         for (let mobType = 0; mobType < 4; mobType++) {
             const mobAmount = math.ceil(totalMob * mobDis[mobType])

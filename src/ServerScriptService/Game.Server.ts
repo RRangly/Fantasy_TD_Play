@@ -43,18 +43,20 @@ export class TDPlayer {
         SetData(this.userID, this)
     }
     update(deltaTime: number) {
-        for(let i = 0; i < this.towerManager.towers.size(); i++) {
-            if(this.towerManager.energy < 0) break
-            const att = this.towerManager.towers[i].update(deltaTime)
+        const towers = this.towerManager.towers
+        for(let i = 0; i < towers.size(); i++) {
+            const att = towers[i].update(deltaTime)
             this.traitsManager.invoke("MobDamage", att)
         }
+        /*
         for(let i = 0; i < this.mobManager.mobs.size(); i++) {
             this.mobManager.movement(i, deltaTime)
         }
+        */
     }
 }
 
-const GameService = KnitServer.CreateService({
+export const GameService = KnitServer.CreateService({
     Name: "GameService",
 
     Client: {
@@ -73,10 +75,11 @@ const GameService = KnitServer.CreateService({
             player.Character?.MoveTo(tdPlayer.mapManager.playerSpawn)
             let count = 0
             let passed = 0
+            tdPlayer.waveManager.startWave()
             RunService.Heartbeat.Connect(function(deltaTime: number) {
                 count += 1
                 passed += deltaTime
-                if (count >= 10) {
+                if (count >= 60) {
                     tdPlayer.update(passed)
                 }
             })

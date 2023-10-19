@@ -2,9 +2,11 @@ import Roact, { Element, Event } from "@rbxts/roact";
 import { ReplicatedStorage, TweenService } from "@rbxts/services";
 import type { TowerManager } from "ServerScriptService/Modules/TowerManager";
 import type { ShopManager } from "ServerScriptService/Modules/ShopManager";
-import { Tower, TowerList } from "ReplicatedStorage/Towers/Towers";
+import type { CoinManager } from "ServerScriptService/Modules/CoinManager";
+import { Tower, TowerInfo, TowerList } from "ReplicatedStorage/Towers/Towers";
 import { GuiAssets } from "ReplicatedStorage/Game/GuiAssets";
 import { KnitClient } from "@rbxts/knit";
+import { t } from "@rbxts/t";
 
 const TowerModels = ReplicatedStorage.TowerModels
 const ClientAssets = ReplicatedStorage.ClientAssets
@@ -13,12 +15,13 @@ const GameService = KnitClient.GetService("GameService")
 interface UIProps {
     shopManager: ShopManager
     towerManager: TowerManager
+    coinManager: CoinManager
 }
 
 interface UIState {
     shopManager: ShopManager
     towerManager: TowerManager
-    currentShop: string
+    coinManager: CoinManager
     selected?: number
 }
 
@@ -26,7 +29,7 @@ function shopFrames(shopManager: ShopManager): Roact.Element {
     const shopItems = shopManager.shopItems
     let frames = []
     for (let i = 0; i < 3; i++) {
-        frames[i] = (<GuiAssets.selectFrame
+        frames[i] = (<GuiAssets.shopSelFrame
         image="NotYet"
         text1={shopItems[i].name}
         text2={tostring(shopItems[i].cost)}
@@ -78,7 +81,7 @@ export class TowerClient extends Roact.Component<UIProps, UIState> {
     state: Readonly<UIState> = {
         shopManager: this.props.shopManager,
         towerManager: this.props.towerManager,
-        currentShop: "Towers"
+        coinManager: this.props.coinManager,
     }
     
     constructor(props: UIProps) {
@@ -134,6 +137,10 @@ export class TowerClient extends Roact.Component<UIProps, UIState> {
 
     }
     render(): Roact.Element | undefined {
+        let tower: Tower | undefined = undefined
+        if(this.state.selected) {
+            tower = this.state.towerManager.towers[this.state.selected]
+        }
         return (<GuiAssets.baseFrame>
             <GuiAssets.imageFrame key= "ShopFrame" image= "rbxassetid://14886161433" size={new UDim2(0.55,0,0.25,0)} position={new UDim2(0.5,0,1,0)} anchorPoint={new Vector2(0.5,1)}>
                 <GuiAssets.imageButton
@@ -150,8 +157,80 @@ export class TowerClient extends Roact.Component<UIProps, UIState> {
                 {shopFrames(this.state.shopManager)}
                 {cardsFrame(this.state.towerManager)}
             </GuiAssets.imageFrame>
-            {this.state.selected ? <GuiAssets.imageFrame key="ShopFrame" image="rbxassetid://14886161433" size={new UDim2(0.195,0,0.455,0)} position={new UDim2(1,0,1,0)} anchorPoint={new Vector2(1,1)}>
-                
+            {tower ? <GuiAssets.imageFrame key="SelectFrame" image="rbxassetid://14886212727" size={new UDim2(0.195,0,0.455,0)} position={new UDim2(1,0,1,0)} anchorPoint={new Vector2(1,1)}>
+                <GuiAssets.imageFrame key="Level" image="rbxassetid://14886195550" size={new UDim2(0.3, 0, 0.23, 0)} position={new UDim2(0,0,0,0)} anchorPoint={new Vector2(0.2,0.3)}>
+                    <textlabel
+                        Size={new UDim2(0.5, 0, 0.5, 0)} 
+                        Position={new UDim2(0.5, 0, 0.5, 0)}
+                        BackgroundTransparency={1}
+                        FontFace={new Font("SpecialElite", Enum.FontWeight.Regular, Enum.FontStyle.Normal)} 
+                        TextScaled = {true}
+                        TextXAlignment={"Center"}
+                        TextYAlignment={"Center"}
+                        TextWrapped={true}>
+                            <uistroke Color={new Color3()} Thickness={1} />
+                            <uitextsizeconstraint MaxTextSize={60} MinTextSize={1}/>
+                    </textlabel>
+                </GuiAssets.imageFrame>
+                <textlabel
+                    Key="CardName"
+                    Size={new UDim2(0.72, 0, 0.07, 0)}
+                    Position={new UDim2(0.22, 0, 0.06, 0)}
+                    BackgroundTransparency={1}
+                    FontFace={new Font("SpecialElite", Enum.FontWeight.Regular, Enum.FontStyle.Normal)}
+                    Text={tower.name}
+                    TextScaled = {true}
+                    TextXAlignment={"Center"}
+                    TextYAlignment={"Center"}
+                    TextWrapped={true}>
+                        <uistroke Color={new Color3()} Thickness={1}/>
+                        <uitextsizeconstraint MaxTextSize={40} MinTextSize={1}/>
+                </textlabel>
+                <GuiAssets.imageFrame key="CardImage" image="rbxassetid://14886195550" size={new UDim2(0.5, 0, 0.4, 0)} position={new UDim2(0.38,0,0.15,0)} anchorPoint={new Vector2(0,0)}>
+                    <GuiAssets.imageFrame key="Image" image="NotYet" size={new UDim2(0.7, 0, 0.7, 0)} position={new UDim2(0.5, 0, 0.5, 0)} anchorPoint={new Vector2(0.5, 0.5)}/>
+                </GuiAssets.imageFrame>
+                <GuiAssets.imageButton
+                key="Upgrade"
+                image="rbxassetid://14886174309"
+                size={new UDim2(0.715, 0, 0.45, 0)}
+                position={new UDim2(0.245, 0, 0.22, 0)}
+                anchorPoint={new Vector2(0, 0)}
+                maxTextSize={22}
+                text1="Upgrade"
+                text2={tostring(tower.stats[tower.level+1].cost)}
+                event={() => {
+                    if (tower && this.state.coinManager.coin >= tower.stats[tower.level+1].cost) {
+                        GameService.ManageTower.Fire("Upgrade", this.state.selected)
+                    }
+                }}/>
+                <GuiAssets.imageButton
+                key="Priority"
+                image="rbxassetid://14886174309"
+                size={new UDim2(0.715, 0, 0.45, 0)}
+                position={new UDim2(0.245, 0, 0.22, 0)}
+                anchorPoint={new Vector2(0, 0)}
+                maxTextSize={22}
+                text1="Priority"
+                text2={tostring(tower.priority)}
+                event={() => {
+                    if (tower) {
+                        GameService.ManageTower.Fire("Priority", this.state.selected)
+                    }
+                }}/>
+                <GuiAssets.imageButton
+                key="Sell"
+                image="rbxassetid://14886174309"
+                size={new UDim2(0.715, 0, 0.45, 0)}
+                position={new UDim2(0.245, 0, 0.22, 0)}
+                anchorPoint={new Vector2(0, 0)}
+                maxTextSize={22}
+                text1="Sell"
+                text2={tostring(tower.stats[tower.level].cost)}
+                event={() => {
+                    if (tower) {
+                        GameService.ManageTower.Fire("Sell", this.state.selected)
+                    }
+                }}/>
             </GuiAssets.imageFrame>: undefined}
         </GuiAssets.baseFrame>)
     }

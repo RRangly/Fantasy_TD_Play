@@ -69,7 +69,7 @@ export class TowerManager {
                 tower.level += 1
                 return true
             }
-            else if (manageType === "SwitchTarget") {
+            else if (manageType === "Priority") {
                 tower.priority += 1
                 return true
             }
@@ -89,7 +89,7 @@ export class TowerManager {
             if (priority === TowerPriority.First) {
                 let firstWayPoint = 0
                 let firstDistance = 0
-                mobs.forEach(mob => {
+                mobs.forEach((mob: Mob) => {
                     const mobVector = mob.position2D
                     const mobDistance = mobVector.sub(towerVector).Magnitude
                     if (mobDistance < range) {
@@ -108,7 +108,7 @@ export class TowerManager {
             }
             else if (priority === TowerPriority.Strongest) {
                 let highestHealth: number
-                mobs.forEach(mob => {
+                mobs.forEach((mob: Mob) => {
                     const mobVector = mob.position2D
                     const mobDistance = mobVector.sub(towerVector).Magnitude
                     if (mobDistance < range) {
@@ -120,7 +120,7 @@ export class TowerManager {
             }
             else if (priority === TowerPriority.Weakest) {
                 let lowestHealth: number
-                mobs.forEach(mob => {
+                mobs.forEach((mob: Mob) => {
                     const mobVector = mob.position2D
                     const mobDistance = mobVector.sub(towerVector).Magnitude
                     if (mobDistance < range) {

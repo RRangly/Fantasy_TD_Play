@@ -4,6 +4,7 @@ import { MinigunInfo } from "./Minigunner";
 interface towerLevel {
     readonly levelName: string
     readonly cost: number
+    readonly energyUse?: number
     readonly damage?: number
     readonly preAction?: number
     readonly actionInterval?: number

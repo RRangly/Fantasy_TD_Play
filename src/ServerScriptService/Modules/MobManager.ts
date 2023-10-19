@@ -1,5 +1,5 @@
 //Manages Mobs
-import { ReplicatedStorage } from "@rbxts/services"
+import { ReplicatedStorage, Workspace } from "@rbxts/services"
 import { GetData } from "../../ReplicatedStorage/Data"
 
 //Data Types sent between functions
@@ -30,18 +30,37 @@ export class Mob {
     position: Vector3
     position2D: Vector2
     frozen: boolean
-    constructor(mobInfo: MobInfo, spawn: Vector3) {
-        const model = ReplicatedStorage.WaitForChild(mobInfo.model)
+    constructor(mobInfo: MobInfo, waypoints: Vector3[]) {
+        const model = ReplicatedStorage.MobModels.WaitForChild(mobInfo.model)
         if (model.IsA("Model")) {
-            this.model = model
+            this.model = model.Clone()
+            this.model.Parent = Workspace.Mobs
+            this.model.GetDescendants().forEach(part => {
+                if (part.IsA("BasePart")) {
+                    //part.Anchored = true
+                    part.CollisionGroup = "Mobs"
+                    part.CanCollide = true
+                    part.SetNetworkOwner(undefined)
+                }
+            });
+            this.model.MoveTo(waypoints[0])
         }
         this.walkSpeed = mobInfo.walkSpeed
         this.maxHealth = mobInfo.maxHealth
         this.health = mobInfo.maxHealth
         this.waypoint = 0
         this.frozen = false
-        this.position = spawn
-        this.position2D = new Vector2(spawn.X, spawn.Z)
+        this.position = waypoints[0]
+        this.position2D = new Vector2(waypoints[0].X, waypoints[0].Z)
+        const hum = this.model?.WaitForChild("Humanoid")
+        let i = 0;
+        if (hum?.IsA("Humanoid")) {
+            waypoints.forEach(waypoint => {
+                i++
+                hum.MoveTo(waypoint)
+                hum.MoveToFinished.Wait()
+            });
+        }
     }
     takeDamage(damage: number) {
         const preHealth = this.health
@@ -120,7 +139,7 @@ export class MobManager {
         if (waypoints) {
             for (let i = 0; i < spawnList.size(); i++) {
                 const mobInfo = spawnList[i]
-                const mob = new Mob(mobInfo, waypoints[0])
+                const mob = new Mob(mobInfo, waypoints)
                 mob.position = waypoints[0]
                 this.mobs.push(mob)
                 task.wait(0.2)
@@ -149,7 +168,7 @@ export class MobManager {
         const waypoints = GetData(this.userId)?.mapManager.waypoints
         if (waypoints) {
             const mob = this.mobs[mobIndex]
-            let distance = mob.walkSpeed * deltaTime
+            let distance = (mob.walkSpeed * deltaTime)
             let position = mob.position
             let dest = mob.waypoint
             while (distance > 0) {
@@ -158,6 +177,7 @@ export class MobManager {
                 if (!nextWp) {
                     position = waypoint
                     distance = 0
+                    break
                 }
                 const wpDistance = nextWp.sub(position).Magnitude
                 if (wpDistance > distance) {
@@ -170,6 +190,7 @@ export class MobManager {
                     distance -= wpDistance
                 }
             }
+            mob.model?.MoveTo(position)
             mob.position = position
             mob.position2D = new Vector2(position.X, position.Z)
             mob.waypoint = dest
