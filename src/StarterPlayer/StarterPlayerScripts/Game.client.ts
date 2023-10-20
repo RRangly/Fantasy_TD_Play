@@ -3,35 +3,32 @@ import { Players, ReplicatedStorage } from "@rbxts/services";
 import { GetData } from "ReplicatedStorage/Data";
 import { TowerClient } from "./Modules/TowerClient";
 import { Tower } from "ReplicatedStorage/Towers/Towers";
+import Roact from "@rbxts/roact";
+import type { TDPlayer } from "ServerScriptService/Game.server";
 
 const Player = Players.LocalPlayer
+const PlayerGui = Player.FindFirstChild("PlayerGui") as PlayerGui
 const GameService = KnitClient.GetService("GameService")
-const UserId = Player.UserId
 
 interface Client {
     TowerClient: TowerClient
 }
 
-if (Player.Character) {
-    GameService.GameLoaded.Fire()
-}
-else {
-    Player.CharacterAdded.Once(() => {
-        GameService.GameLoaded.Fire()
-    })
-}
-
-Player.CharacterAdded.Connect(() => {
-    const Data = GetData(UserId)
-    if (!Data) {
+GameService.dataUpdate.Connect((data: TDPlayer) => {
+    if (!data) {
         return
     }
     const clientObj: Client = {
-        TowerClient: new TowerClient({
-            towerManager: Data.towerManager,
-            shopManager: Data.shopManager,
-            coinManager: Data.coinManager,
-        })
+        TowerClient: new TowerClient(data.towerManager, data.shopManager, data.coinManager)
     }
-    clientObj.TowerClient.update(Data.towerManager)
+    print("Mounted")
 })
+
+if (Player.Character) {
+    GameService.gameLoaded.Fire()
+}
+else {
+    Player.CharacterAdded.Once(() => {
+        GameService.gameLoaded.Fire()
+    })
+}

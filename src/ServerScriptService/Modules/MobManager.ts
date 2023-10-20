@@ -139,9 +139,11 @@ export class MobManager {
         if (waypoints) {
             for (let i = 0; i < spawnList.size(); i++) {
                 const mobInfo = spawnList[i]
-                const mob = new Mob(mobInfo, waypoints)
-                mob.position = waypoints[0]
-                this.mobs.push(mob)
+                task.spawn(() => {
+                    const mob = new Mob(mobInfo, waypoints)
+                    mob.position = waypoints[0]
+                    this.mobs.push(mob)
+                })
                 task.wait(0.2)
             }
         }

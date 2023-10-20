@@ -14,9 +14,9 @@ export class ShopManager {
     }
     //ReRolls the cards
     reRoll() {
-        const coinManager = GetData(this.userId)?.coinManager
+        const coinManager = GetData(this.userId)!.coinManager
         const cost = math.floor(1.1 ^ this.reRolled * 115)
-        if (coinManager && coinManager.coin > cost) {
+        if (coinManager.coin > cost) {
             coinManager.changeCoins(-cost)
             this.shopItems.clear()
             for (let i = 0; i < 3; i++) {
@@ -35,8 +35,8 @@ export class ShopManager {
     //Picks the Card, and adds it to towerManager Cards
     pick(pick: number) {
         const data = GetData(this.userId)
-        const coinManager = data?.coinManager
-        const towerManager = data?.towerManager
+        const coinManager = data!.coinManager
+        const towerManager = data!.towerManager
         const tower = this.shopItems[pick]
         const cost = tower.stats[0].cost
         if (coinManager && coinManager.coin >= cost) {

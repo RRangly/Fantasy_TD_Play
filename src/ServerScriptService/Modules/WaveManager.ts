@@ -24,8 +24,8 @@ export class WaveManager {
     //starts a wave, calculates weight and mob distribution and feeds it to MobManager
     startWave() {
         const data = GetData(this.userId)
-        const mobManager = data?.mobManager
-        const traitsManager = data?.traitsManager
+        const mobManager = data!.mobManager
+        const traitsManager = data!.traitsManager
 
         this.currentWave += 1
         //if (this.currentWave % 5) {

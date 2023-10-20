@@ -29,7 +29,7 @@ export class TraitsManager {
                     if (!this.traits.get(event)) {
                         this.traits.set(event, new Array<Trait>)
                     }
-                    this.traits.get(event)?.push(new Trait(this.userId, this.traitSel[i]))
+                    this.traits.get(event)!.push(new Trait(this.userId, this.traitSel[i]))
                 }
             }
         }
