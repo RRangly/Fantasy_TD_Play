@@ -19,11 +19,19 @@ interface UIProps {
     coinManager: CoinManager
 }
 
+interface SelectFrameProps extends Roact.PropsWithChildren{
+    text1: string
+    text2: string
+    image: string
+    index: number
+    event: () => void
+}
+
 function shopFrames(shopManager: ShopManager): Roact.Element {
     const shopItems = shopManager.shopItems
     let frames = []
     for (let i = 0; i < 3; i++) {
-        frames[i] = (<GuiAssets.shopSelFrame
+        frames[i] = (<ShopSelFrame
         image="NotYet"
         text1={shopItems[i].name}
         text2={tostring(shopItems[i].cost)}
@@ -42,7 +50,7 @@ function cardsFrame(towerManager:TowerManager): Roact.Element {
     const cards = towerManager.cards
     let frames = []
     for (let i = 0; i < cards.size(); i++) {
-        frames[i] = <GuiAssets.imageFrame
+        frames[i] = <GuiAssets.ImageFrame
         key={tostring(i)}
         image="rbxassetid://14886195550"
         size={new UDim2(0.1, 0, 1, 0)}
@@ -56,7 +64,7 @@ function cardsFrame(towerManager:TowerManager): Roact.Element {
             Size={new UDim2(0.8, 0, 0.8, 0)}
             Position={new UDim2(0.5, 0, 0.5, 0)}
             BackgroundTransparency={1}/>
-        </GuiAssets.imageFrame>
+        </GuiAssets.ImageFrame>
     }
     return (
     <frame
@@ -68,14 +76,62 @@ function cardsFrame(towerManager:TowerManager): Roact.Element {
     </frame>)
 }
 
+function ShopSelFrame(props: SelectFrameProps): Roact.Element {
+    return (
+        <imagebutton
+        Key={tostring(props.index)}
+        Image="rbxassetid://14886184492"
+        Size={new UDim2(0.255,0,0.5,0)}
+        Position={new UDim2(0.025 + props.index * 0.225,0,0.4,0)}
+        AnchorPoint={new Vector2(0,0)}
+        ScaleType="Crop"
+        BackgroundTransparency={1}
+        Event={{
+            MouseButton1Down: props.event
+        }}
+        >
+            <textlabel
+                Key="Name"
+                Size={new UDim2(0.45,0,0.16,0)} 
+                Position={new UDim2(0.15,0,0.7,0)} 
+                BackgroundTransparency={1}
+                FontFace={new Font("SpecialElite", Enum.FontWeight.Regular, Enum.FontStyle.Normal)}
+                Text={props.text1}
+                TextScaled = {true}
+                TextColor3={Color3.fromRGB(98,98,98)}
+                TextXAlignment="Left"
+                TextYAlignment="Top"
+                TextWrapped={true}>
+                    <uistroke Color={Color3.fromRGB(98,98,98)} Thickness={0.1} />
+                    <uitextsizeconstraint MaxTextSize={22} MinTextSize={1}/>
+            </textlabel>
+            <textlabel
+                Key="Cost"
+                Size={new UDim2(0.25,0,0.16,0)} 
+                Position={new UDim2(0.625,0,0.7,0)} 
+                BackgroundTransparency={1}
+                FontFace={new Font("SpecialElite", Enum.FontWeight.Regular, Enum.FontStyle.Normal)}
+                Text={props.text2}
+                TextScaled = {true}
+                TextColor3={Color3.fromRGB(98,98,98)}
+                TextXAlignment="Left"
+                TextYAlignment="Top"
+                TextWrapped={true}>
+                    <uistroke Color={Color3.fromRGB(98,98,98)} Thickness={0.1} />
+                    <uitextsizeconstraint MaxTextSize={22} MinTextSize={1}/>
+            </textlabel>
+        </imagebutton>
+    )
+}
+
 function towerUI(towerClient: TowerClient) {
     let tower: Tower | undefined = undefined
     if(towerClient.selected) {
         tower = towerClient.towerManager.towers[towerClient.selected]
     }
-    return (<GuiAssets.baseFrame>
-        <GuiAssets.imageFrame key= "ShopFrame" image= "rbxassetid://14886161433" size={new UDim2(0.55,0,0.25,0)} position={new UDim2(0.5,0,1,0)} anchorPoint={new Vector2(0.5,1)}>
-            <GuiAssets.imageButton
+    return (<GuiAssets.BaseFrame>
+        <GuiAssets.ImageFrame key= "ShopFrame" image= "rbxassetid://14886161433" size={new UDim2(0.55,0,0.25,0)} position={new UDim2(0.5,0,1,0)} anchorPoint={new Vector2(0.5,1)}>
+            <GuiAssets.ImageButton
             key="ReRoll"
             image="rbxassetid://14886174309"
             size={new UDim2(0.715, 0, 0.45, 0)}
@@ -88,9 +144,9 @@ function towerUI(towerClient: TowerClient) {
             }}/>
             {shopFrames(towerClient.shopManager)}
             {cardsFrame(towerClient.towerManager)}
-        </GuiAssets.imageFrame>
-        {tower ? <GuiAssets.imageFrame key="SelectFrame" image="rbxassetid://14886212727" size={new UDim2(0.195,0,0.455,0)} position={new UDim2(1,0,1,0)} anchorPoint={new Vector2(1,1)}>
-            <GuiAssets.imageFrame key="Level" image="rbxassetid://14886195550" size={new UDim2(0.3, 0, 0.23, 0)} position={new UDim2(0,0,0,0)} anchorPoint={new Vector2(0.2,0.3)}>
+        </GuiAssets.ImageFrame>
+        {tower ? <GuiAssets.ImageFrame key="SelectFrame" image="rbxassetid://14886212727" size={new UDim2(0.195,0,0.455,0)} position={new UDim2(1,0,1,0)} anchorPoint={new Vector2(1,1)}>
+            <GuiAssets.ImageFrame key="Level" image="rbxassetid://14886195550" size={new UDim2(0.3, 0, 0.23, 0)} position={new UDim2(0,0,0,0)} anchorPoint={new Vector2(0.2,0.3)}>
                 <textlabel
                     Size={new UDim2(0.5, 0, 0.5, 0)} 
                     Position={new UDim2(0.5, 0, 0.5, 0)}
@@ -103,7 +159,7 @@ function towerUI(towerClient: TowerClient) {
                         <uistroke Color={new Color3()} Thickness={1} />
                         <uitextsizeconstraint MaxTextSize={60} MinTextSize={1}/>
                 </textlabel>
-            </GuiAssets.imageFrame>
+            </GuiAssets.ImageFrame>
             <textlabel
                 Key="CardName"
                 Size={new UDim2(0.72, 0, 0.07, 0)}
@@ -118,10 +174,10 @@ function towerUI(towerClient: TowerClient) {
                     <uistroke Color={new Color3()} Thickness={1}/>
                     <uitextsizeconstraint MaxTextSize={40} MinTextSize={1}/>
             </textlabel>
-            <GuiAssets.imageFrame key="CardImage" image="rbxassetid://14886195550" size={new UDim2(0.5, 0, 0.4, 0)} position={new UDim2(0.38,0,0.15,0)} anchorPoint={new Vector2(0,0)}>
-                <GuiAssets.imageFrame key="Image" image="NotYet" size={new UDim2(0.7, 0, 0.7, 0)} position={new UDim2(0.5, 0, 0.5, 0)} anchorPoint={new Vector2(0.5, 0.5)}/>
-            </GuiAssets.imageFrame>
-            <GuiAssets.imageButton
+            <GuiAssets.ImageFrame key="CardImage" image="rbxassetid://14886195550" size={new UDim2(0.5, 0, 0.4, 0)} position={new UDim2(0.38,0,0.15,0)} anchorPoint={new Vector2(0,0)}>
+                <GuiAssets.ImageFrame key="Image" image="NotYet" size={new UDim2(0.7, 0, 0.7, 0)} position={new UDim2(0.5, 0, 0.5, 0)} anchorPoint={new Vector2(0.5, 0.5)}/>
+            </GuiAssets.ImageFrame>
+            <GuiAssets.ImageButton
             key="Upgrade"
             image="rbxassetid://14886174309"
             size={new UDim2(0.715, 0, 0.45, 0)}
@@ -135,7 +191,7 @@ function towerUI(towerClient: TowerClient) {
                     GameService.manageTower.Fire("Upgrade", towerClient.selected)
                 }
             }}/>
-            <GuiAssets.imageButton
+            <GuiAssets.ImageButton
             key="Priority"
             image="rbxassetid://14886174309"
             size={new UDim2(0.715, 0, 0.45, 0)}
@@ -147,7 +203,7 @@ function towerUI(towerClient: TowerClient) {
             event={() => {
                 GameService.manageTower.Fire("Priority", towerClient.selected)
             }}/>
-            <GuiAssets.imageButton
+            <GuiAssets.ImageButton
             key="Sell"
             image="rbxassetid://14886174309"
             size={new UDim2(0.715, 0, 0.45, 0)}
@@ -162,8 +218,8 @@ function towerUI(towerClient: TowerClient) {
                     towerClient.selected = undefined
                 }
             }}/>
-        </GuiAssets.imageFrame>: undefined}
-    </GuiAssets.baseFrame>)
+        </GuiAssets.ImageFrame>: undefined}
+    </GuiAssets.BaseFrame>)
 }
 
 export class TowerClient {
