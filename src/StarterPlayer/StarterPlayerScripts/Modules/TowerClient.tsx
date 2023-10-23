@@ -32,7 +32,7 @@ function shopFrames(shopManager: ShopManager): Roact.Element {
     let frames = []
     for (let i = 0; i < 3; i++) {
         frames[i] = (<ShopSelFrame
-        image="NotYet"
+        image={shopItems[i].image}
         text1={shopItems[i].name}
         text2={tostring(shopItems[i].cost)}
         index={i}
@@ -46,25 +46,31 @@ function shopFrames(shopManager: ShopManager): Roact.Element {
     </>
 }
 
-function cardsFrame(towerManager:TowerManager): Roact.Element {
-    const cards = towerManager.cards
+function cardsFrame(towerClient: TowerClient): Roact.Element {
+    const cards = towerClient.towerManager.cards
     let frames = []
     for (let i = 0; i < cards.size(); i++) {
-        frames[i] = <GuiAssets.ImageFrame
-        key={tostring(i)}
-        image="rbxassetid://14886195550"
-        size={new UDim2(0.1, 0, 1, 0)}
-        position={new UDim2(0.1 * i, 0, 0, 0)}
-        anchorPoint={new Vector2(0,0)}
+        frames[i] = <imagebutton
+        Key={tostring(i)}
+        Image="rbxassetid://14886195550"
+        Size={new UDim2(0.1, 0, 1, 0)}
+        Position={new UDim2(0.1 * i, 0, 0, 0)}
+        AnchorPoint={new Vector2(0,0)}
+        BackgroundTransparency={1}
+        ScaleType={"Crop"}
+        Event={{
+            MouseButton1Down: () => {
+                
+            }
+        }}
         >
-            <imagelabel
-            Key={"TowerImage"}
-            Image="NotReady"
-            AnchorPoint={new Vector2(0.5, 0.5)}
-            Size={new UDim2(0.8, 0, 0.8, 0)}
-            Position={new UDim2(0.5, 0, 0.5, 0)}
-            BackgroundTransparency={1}/>
-        </GuiAssets.ImageFrame>
+            <GuiAssets.ImageFrame
+            key={"TowerImage"}
+            image={cards[i].image}
+            anchorPoint={new Vector2(0.5, 0.5)}
+            size={new UDim2(0.8, 0, 0.8, 0)}
+            position={new UDim2(0.5, 0, 0.5, 0)}/>
+        </imagebutton>
     }
     return (
     <frame
@@ -72,7 +78,7 @@ function cardsFrame(towerManager:TowerManager): Roact.Element {
     Size={new UDim2(0.9, 0, 0.34, 0)}
     Position={new UDim2(0.04, 0, 0.05, 0)}
     BackgroundTransparency={1}>
-        {...frames}
+        {frames}
     </frame>)
 }
 
@@ -95,7 +101,7 @@ function ShopSelFrame(props: SelectFrameProps): Roact.Element {
                 Size={new UDim2(0.45,0,0.16,0)} 
                 Position={new UDim2(0.15,0,0.7,0)} 
                 BackgroundTransparency={1}
-                FontFace={new Font("SpecialElite", Enum.FontWeight.Regular, Enum.FontStyle.Normal)}
+                Font="SpecialElite"
                 Text={props.text1}
                 TextScaled = {true}
                 TextColor3={Color3.fromRGB(98,98,98)}
@@ -110,7 +116,7 @@ function ShopSelFrame(props: SelectFrameProps): Roact.Element {
                 Size={new UDim2(0.25,0,0.16,0)} 
                 Position={new UDim2(0.625,0,0.7,0)} 
                 BackgroundTransparency={1}
-                FontFace={new Font("SpecialElite", Enum.FontWeight.Regular, Enum.FontStyle.Normal)}
+                Font="SpecialElite"
                 Text={props.text2}
                 TextScaled = {true}
                 TextColor3={Color3.fromRGB(98,98,98)}
@@ -129,13 +135,43 @@ function towerUI(towerClient: TowerClient) {
     if(towerClient.selected) {
         tower = towerClient.towerManager.towers[towerClient.selected]
     }
+    let statStrings = []
+    if (tower) {
+        const level = tower.level
+        const stats = tower.stats[level]
+        const nextStats = tower.stats[level + 1]
+        let i = 0
+        for (let [key] of pairs(stats)) {
+            if(key === "levelName") {
+                continue
+            }
+            if (nextStats[key]) {
+                statStrings.push(<textlabel
+                    Key="NextLevel"
+                    Size={new UDim2(0.054, 0, 0.12, 0)}
+                    Position={new UDim2(0.9, 0, 0.02 + 0.14 * i, 0)}
+                    BackgroundTransparency={1}
+                    Font="SpecialElite"
+                    Text={key + ": " + stats[key] + " -> " + nextStats[key]}
+                    TextScaled = {true}
+                    TextXAlignment={"Left"}
+                    TextYAlignment={"Top"}
+                    TextWrapped={true}>
+                        <uistroke Color={new Color3()} Thickness={0.3}/>
+                        <uitextsizeconstraint MaxTextSize={24} MinTextSize={1}/>
+                </textlabel>)
+            }
+            i++
+        }
+
+    }
     return (<GuiAssets.BaseFrame>
         <GuiAssets.ImageFrame key= "ShopFrame" image= "rbxassetid://14886161433" size={new UDim2(0.55,0,0.25,0)} position={new UDim2(0.5,0,1,0)} anchorPoint={new Vector2(0.5,1)}>
             <GuiAssets.ImageButton
             key="ReRoll"
             image="rbxassetid://14886174309"
-            size={new UDim2(0.715, 0, 0.45, 0)}
-            position={new UDim2(0.245, 0, 0.22, 0)}
+            size={new UDim2(0.245, 0, 0.23, 0)}
+            position={new UDim2(0.715, 0, 0.45, 0)}
             anchorPoint={new Vector2(0, 0)}
             maxTextSize={22}
             text1="ReRoll"
@@ -143,15 +179,16 @@ function towerUI(towerClient: TowerClient) {
             event={function () {
             }}/>
             {shopFrames(towerClient.shopManager)}
-            {cardsFrame(towerClient.towerManager)}
+            {cardsFrame(towerClient)}
         </GuiAssets.ImageFrame>
-        {tower ? <GuiAssets.ImageFrame key="SelectFrame" image="rbxassetid://14886212727" size={new UDim2(0.195,0,0.455,0)} position={new UDim2(1,0,1,0)} anchorPoint={new Vector2(1,1)}>
-            <GuiAssets.ImageFrame key="Level" image="rbxassetid://14886195550" size={new UDim2(0.3, 0, 0.23, 0)} position={new UDim2(0,0,0,0)} anchorPoint={new Vector2(0.2,0.3)}>
+        {tower ? <frame Key="SelectFrame" BackgroundTransparency={1} AnchorPoint={new Vector2(0.5,0.5)} Position={new UDim2(0.5,0,0.5,0)} Size={new UDim2(0.35, 0, 0.46, 0)}>
+            <GuiAssets.ImageFrame key="Image" image="rbxassetid://14886212727" size={new UDim2(0.8,0,1.07,0)} position={new UDim2(0.5,0,0.5,0)} anchorPoint={new Vector2(0.5,0.5)}/>  
+            <GuiAssets.ImageFrame key="Level" image="rbxassetid://14886195550" size={new UDim2(0.15, 0, 0.22, 0)} position={new UDim2(0,0,0,0)} anchorPoint={new Vector2(0.4,0.3)}>
                 <textlabel
                     Size={new UDim2(0.5, 0, 0.5, 0)} 
                     Position={new UDim2(0.5, 0, 0.5, 0)}
                     BackgroundTransparency={1}
-                    FontFace={new Font("SpecialElite", Enum.FontWeight.Regular, Enum.FontStyle.Normal)} 
+                    Font="SpecialElite"
                     TextScaled = {true}
                     TextXAlignment={"Center"}
                     TextYAlignment={"Center"}
@@ -162,35 +199,18 @@ function towerUI(towerClient: TowerClient) {
             </GuiAssets.ImageFrame>
             <textlabel
                 Key="CardName"
-                Size={new UDim2(0.72, 0, 0.07, 0)}
-                Position={new UDim2(0.22, 0, 0.06, 0)}
+                Size={new UDim2(0.4, 0, 0.07, 0)}
+                Position={new UDim2(0.05, 0, 0.08, 0)}
                 BackgroundTransparency={1}
-                FontFace={new Font("SpecialElite", Enum.FontWeight.Regular, Enum.FontStyle.Normal)}
+                Font="SpecialElite"
                 Text={tower.name}
                 TextScaled = {true}
                 TextXAlignment={"Center"}
                 TextYAlignment={"Center"}
                 TextWrapped={true}>
-                    <uistroke Color={new Color3()} Thickness={1}/>
+                    <uistroke Color={new Color3()} Thickness={0.5}/>
                     <uitextsizeconstraint MaxTextSize={40} MinTextSize={1}/>
             </textlabel>
-            <GuiAssets.ImageFrame key="CardImage" image="rbxassetid://14886195550" size={new UDim2(0.5, 0, 0.4, 0)} position={new UDim2(0.38,0,0.15,0)} anchorPoint={new Vector2(0,0)}>
-                <GuiAssets.ImageFrame key="Image" image="NotYet" size={new UDim2(0.7, 0, 0.7, 0)} position={new UDim2(0.5, 0, 0.5, 0)} anchorPoint={new Vector2(0.5, 0.5)}/>
-            </GuiAssets.ImageFrame>
-            <GuiAssets.ImageButton
-            key="Upgrade"
-            image="rbxassetid://14886174309"
-            size={new UDim2(0.715, 0, 0.45, 0)}
-            position={new UDim2(0.245, 0, 0.22, 0)}
-            anchorPoint={new Vector2(0, 0)}
-            maxTextSize={22}
-            text1="Upgrade"
-            text2={tostring(tower.stats[tower.level+1].cost)}
-            event={() => {
-                if (towerClient.coinManager.coin >= tower!.stats[tower!.level+1].cost) {
-                    GameService.manageTower.Fire("Upgrade", towerClient.selected)
-                }
-            }}/>
             <GuiAssets.ImageButton
             key="Priority"
             image="rbxassetid://14886174309"
@@ -218,7 +238,59 @@ function towerUI(towerClient: TowerClient) {
                     towerClient.selected = undefined
                 }
             }}/>
-        </GuiAssets.ImageFrame>: undefined}
+            <GuiAssets.ImageFrame key="CardImage" image="rbxassetid://14886195550" size={new UDim2(0.4, 0, 0.52, 0)} position={new UDim2(0.05, 0, 0.17, 0)} anchorPoint={new Vector2(0,0)}>
+                <GuiAssets.ImageFrame key="Image" image={tower.image} size={new UDim2(0.7, 0, 0.7, 0)} position={new UDim2(0.5, 0, 0.5, 0)} anchorPoint={new Vector2(0.5, 0.5)}/>
+            </GuiAssets.ImageFrame>
+
+            <GuiAssets.ImageFrame key="UpgradeImage" image="rbxassetid://14886195550" size={new UDim2(0.32, 0, 0.416, 0)} position={new UDim2(0.41, 0, 0.07, 0)} anchorPoint={new Vector2(0,0)}>
+                <GuiAssets.ImageFrame key="Image" image={tower.image} size={new UDim2(0.7, 0, 0.7, 0)} position={new UDim2(0.5, 0, 0.5, 0)} anchorPoint={new Vector2(0.5, 0.5)}/>
+            </GuiAssets.ImageFrame>
+            <textlabel
+                Key="NextLevel"
+                Size={new UDim2(0.25, 0, 0.04, 0)}
+                Position={new UDim2(0.73, 0, 0.12, 0)}
+                BackgroundTransparency={1}
+                Font="SpecialElite"
+                Text={tower.name}
+                TextScaled = {true}
+                TextXAlignment={"Center"}
+                TextYAlignment={"Center"}
+                TextWrapped={true}>
+                    <uistroke Color={new Color3()} Thickness={0.3}/>
+                    <uitextsizeconstraint MaxTextSize={24} MinTextSize={1}/>
+            </textlabel>
+            <textlabel
+                Key="NextLevel"
+                Size={new UDim2(0.25, 0, 0.06, 0)}
+                Position={new UDim2(0.73, 0, 0.2, 0)}
+                BackgroundTransparency={1}
+                Font="SpecialElite"
+                Text={tower.name}
+                TextScaled = {true}
+                TextXAlignment={"Center"}
+                TextYAlignment={"Center"}
+                TextWrapped={true}>
+                    <uistroke Color={new Color3()} Thickness={0.3}/>
+                    <uitextsizeconstraint MaxTextSize={30} MinTextSize={1}/>
+            </textlabel>
+            <frame Key="Stats" BackgroundTransparency={1} Position={new UDim2(0.44,0,0.46,0)} Size={new UDim2(0.54, 0, 0.38, 0)}>
+                {...statStrings}
+            </frame>
+            <GuiAssets.ImageButton
+            key="Upgrade"
+            image="rbxassetid://14886174309"
+            size={new UDim2(0.715, 0, 0.45, 0)}
+            position={new UDim2(0.245, 0, 0.22, 0)}
+            anchorPoint={new Vector2(0, 0)}
+            maxTextSize={22}
+            text1="Upgrade"
+            text2={tostring(tower.stats[tower.level+1].cost)}
+            event={() => {
+                if (towerClient.coinManager.coin >= tower!.stats[tower!.level+1].cost) {
+                    GameService.manageTower.Fire("Upgrade", towerClient.selected)
+                }
+            }}/>
+        </frame>: undefined}
     </GuiAssets.BaseFrame>)
 }
 
@@ -237,8 +309,6 @@ export class TowerClient {
         this.shopManager = shopManager
         this.coinManager = coinManager
         this.towerUI = Roact.mount(towerUI(this), PlayerGui, "TowerGui")
-        print("Tomount", towerUI(this))
-        print("Mounted", this.towerUI)
     }
 
     updateSelection(towerIndex: number | undefined) {
@@ -271,6 +341,11 @@ export class TowerClient {
         }
         this.selected = undefined
     }
+
+    startPlacement() {
+        
+    }
+
     update(towerManager: TowerManager, shopManager: ShopManager, coinManager: CoinManager) {
         this.towerManager = towerManager
         this.shopManager = shopManager

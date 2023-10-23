@@ -36,11 +36,12 @@ function ButtonText(props: buttonTextProps) {
         Size={props.size} 
         Position={props.position}
         BackgroundTransparency={1} 
-        FontFace={new Font("SpecialElite", Enum.FontWeight.Regular, Enum.FontStyle.Normal)}
+        Font={"SpecialElite"}
         Text={props.text}
         TextScaled = {true}
         TextXAlignment={"Center"}
         TextYAlignment={"Top"}
+        AnchorPoint={new Vector2(0.5, 0)}
         TextWrapped={true}>
             <uistroke Color={new Color3()} Thickness={0.3} />
             <uitextsizeconstraint MaxTextSize={props.maxTextSize} MinTextSize={1}/>

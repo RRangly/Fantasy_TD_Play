@@ -22,29 +22,34 @@ export interface AttackInfo {
 
 //Mob Instance
 export class Mob {
-    readonly model?: Model
+    readonly model: Model
     readonly walkSpeed: number
     readonly maxHealth: number
+    readonly humanoid: Humanoid
+    readonly spawnTime: number
     health: number
     waypoint: number
     position: Vector3
     position2D: Vector2
     frozen: boolean
+    travelled: number
     constructor(mobInfo: MobInfo, waypoints: Vector3[]) {
-        const model = ReplicatedStorage.MobModels.WaitForChild(mobInfo.model)
-        if (model.IsA("Model")) {
-            this.model = model.Clone()
-            this.model.Parent = Workspace.Mobs
-            this.model.GetDescendants().forEach(part => {
-                if (part.IsA("BasePart")) {
-                    //part.Anchored = true
-                    part.CollisionGroup = "Mobs"
-                    part.CanCollide = true
-                    part.SetNetworkOwner(undefined)
-                }
-            });
-            this.model.MoveTo(waypoints[0])
-        }
+        this.spawnTime = os.clock()
+        this.travelled = 0
+        const model = ReplicatedStorage.MobModels.WaitForChild(mobInfo.model) as Model
+        this.model = model.Clone()
+        this.model.Parent = Workspace.Mobs
+        this.model.GetDescendants().forEach(part => {
+            if (part.IsA("BasePart")) {
+                //part.Anchored = true
+                part.CollisionGroup = "Mobs"
+                part.CanCollide = true
+                part.SetNetworkOwner(undefined)
+            }
+        });
+        const hum = this.model.WaitForChild("Humanoid") as Humanoid
+        this.humanoid = hum
+        this.model.MoveTo(waypoints[0])
         this.walkSpeed = mobInfo.walkSpeed
         this.maxHealth = mobInfo.maxHealth
         this.health = mobInfo.maxHealth
@@ -52,15 +57,13 @@ export class Mob {
         this.frozen = false
         this.position = waypoints[0]
         this.position2D = new Vector2(waypoints[0].X, waypoints[0].Z)
-        const hum = this.model?.WaitForChild("Humanoid")
         let i = 0;
-        if (hum?.IsA("Humanoid")) {
-            waypoints.forEach(waypoint => {
-                i++
-                hum.MoveTo(waypoint)
-                hum.MoveToFinished.Wait()
-            });
-        }
+        hum.WalkSpeed = this.walkSpeed
+        waypoints.forEach(waypoint => {
+            i++
+            hum.MoveTo(waypoint)
+            hum.MoveToFinished.Wait()
+        });
     }
     takeDamage(damage: number) {
         const preHealth = this.health

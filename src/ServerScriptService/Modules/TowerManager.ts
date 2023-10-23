@@ -1,7 +1,7 @@
 import { ReplicatedStorage, Workspace } from "@rbxts/services"
 import { GetData } from "ReplicatedStorage/Data"
 import { Mob } from "./MobManager"
-import { Tower, TowerInfo, TowerPriority } from "ReplicatedStorage/Towers/Towers"
+import { Tower, TowerInfo, TowerList, TowerPriority } from "ReplicatedStorage/Towers/Towers"
 
 export class TowerManager {
     readonly userId: number
@@ -15,6 +15,7 @@ export class TowerManager {
         this.energy = 50
         this.towers = new Array<Tower>
         this.cards = new Array<TowerInfo>
+        this.cards.push(TowerList[0])
     }
     //checks if Placement is valid
     checkPlacement(towerType: string, position: Vector3) {

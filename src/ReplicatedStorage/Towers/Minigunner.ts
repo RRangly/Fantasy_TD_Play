@@ -2,7 +2,7 @@ import { GetData } from "ReplicatedStorage/Data"
 import { Tower } from "./Towers"
 
 export const MinigunInfo = {
-    name: "minigunner",
+    name: "Minigunner",
     cost: 500,
     stats : [
         {
@@ -48,9 +48,11 @@ export const MinigunInfo = {
     ],
     placement : {
         area: 1,
-        type: "plain",
+        type: "Plain",
         height: 3.01,
     },
+    offensive: true,
+    image: "NotReady",
     update: (tower: Tower, deltaTime: number) => {
         return {
             mobIndex: 1,
