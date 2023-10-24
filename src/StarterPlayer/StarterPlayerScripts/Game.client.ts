@@ -1,5 +1,5 @@
 import { KnitClient } from "@rbxts/knit";
-import { Players, ReplicatedStorage } from "@rbxts/services";
+import { Players, ReplicatedStorage, RunService, UserInputService } from "@rbxts/services";
 import { GetData } from "ReplicatedStorage/Data";
 import { TowerClient } from "./Modules/TowerClient";
 import { Tower } from "ReplicatedStorage/Towers/Towers";
@@ -21,7 +21,28 @@ GameService.dataUpdate.Connect((data: TDPlayer) => {
     const clientObj: Client = {
         TowerClient: new TowerClient(data.towerManager, data.shopManager, data.coinManager)
     }
-    print("Mounted")
+    RunService.RenderStepped.Connect(() => {
+        clientObj.TowerClient.render()
+    })
+
+    UserInputService.InputBegan.Connect((inputObj) => {
+        if (inputObj.KeyCode === Enum.KeyCode.F) {
+            clientObj.TowerClient.endPlacement()
+        }
+        const mouseLocation = UserInputService.GetMouseLocation()
+        const frames = PlayerGui.GetGuiObjectsAtPosition(mouseLocation.X, mouseLocation.Y - 36)
+        let clickValid = true
+        frames.forEach((frame) => {
+            if (!(frame.BackgroundTransparency === 1)) {
+                clickValid = false
+            }
+        })
+        if (clickValid) {
+            if (inputObj.UserInputType === Enum.UserInputType.MouseButton1) {
+                clientObj.TowerClient.mouseClick()
+            }
+        }
+    })
 })
 
 if (Player.Character) {

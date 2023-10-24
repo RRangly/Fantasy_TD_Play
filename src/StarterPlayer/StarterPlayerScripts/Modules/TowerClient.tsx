@@ -1,5 +1,5 @@
 import Roact, { Element, Event } from "@rbxts/roact";
-import { Players, ReplicatedStorage, TweenService } from "@rbxts/services";
+import { Players, ReplicatedStorage, TweenService, UserInputService, Workspace } from "@rbxts/services";
 import type { TowerManager } from "ServerScriptService/Modules/TowerManager";
 import type { ShopManager } from "ServerScriptService/Modules/ShopManager";
 import type { CoinManager } from "ServerScriptService/Modules/CoinManager";
@@ -132,7 +132,7 @@ function ShopSelFrame(props: SelectFrameProps): Roact.Element {
 
 function towerUI(towerClient: TowerClient) {
     let tower: Tower | undefined = undefined
-    if(towerClient.selected) {
+    if(t.number(towerClient.selected)) {
         tower = towerClient.towerManager.towers[towerClient.selected]
     }
     let statStrings = []
@@ -246,12 +246,12 @@ function towerUI(towerClient: TowerClient) {
                 <GuiAssets.ImageFrame key="Image" image={tower.image} size={new UDim2(0.7, 0, 0.7, 0)} position={new UDim2(0.5, 0, 0.5, 0)} anchorPoint={new Vector2(0.5, 0.5)}/>
             </GuiAssets.ImageFrame>
             <textlabel
-                Key="NextLevel"
+                Key="NextLevelNum"
                 Size={new UDim2(0.25, 0, 0.04, 0)}
                 Position={new UDim2(0.73, 0, 0.12, 0)}
                 BackgroundTransparency={1}
                 Font="SpecialElite"
-                Text={tower.name}
+                Text={tostring(tower.level + 1)}
                 TextScaled = {true}
                 TextXAlignment={"Center"}
                 TextYAlignment={"Center"}
@@ -260,7 +260,7 @@ function towerUI(towerClient: TowerClient) {
                     <uitextsizeconstraint MaxTextSize={24} MinTextSize={1}/>
             </textlabel>
             <textlabel
-                Key="NextLevel"
+                Key="NextLevelName"
                 Size={new UDim2(0.25, 0, 0.06, 0)}
                 Position={new UDim2(0.73, 0, 0.2, 0)}
                 BackgroundTransparency={1}
@@ -299,30 +299,37 @@ export class TowerClient {
     towerManager: TowerManager
     shopManager: ShopManager
     coinManager: CoinManager
+    map: TDSMap
+    //selection Related
     selected?: number
     selectFrame?: Frame
-    placing?: number
     rangeDisplay?: BasePart
+    //placement Related
+    placing?: number
+    rayCast?: RaycastResult
+    placeModel?: Model
 
     constructor(towerManager: TowerManager, shopManager: ShopManager, coinManager: CoinManager) {
         this.towerManager = towerManager
         this.shopManager = shopManager
         this.coinManager = coinManager
+        this.map = Workspace.Map.GetChildren()[0] as TDSMap
         this.towerUI = Roact.mount(towerUI(this), PlayerGui, "TowerGui")
     }
 
-    updateSelection(towerIndex: number | undefined) {
+    updateSelection(towerIndex?: number) {
         const towerManager = this.towerManager
         const towers = towerManager.towers
         if (this.selected !== towerIndex && this.rangeDisplay) {
-            const tween = TweenService.Create(this.rangeDisplay, new TweenInfo(0.5), {Size: new Vector3(0.2, 0, 0)})
+            const toDestroy = this.rangeDisplay
+            const tween = TweenService.Create(toDestroy, new TweenInfo(0.5), {Size: new Vector3(0.2, 0, 0)})
             tween.Play()
             tween.Completed.Once(() => {
-                this.rangeDisplay?.Destroy()
+                toDestroy.Destroy()
             })
         }
         this.selectFrame?.Destroy()
-        if (towerIndex) {
+        if (t.number(towerIndex)) {
             const tower = towers[towerIndex]
             const towerInfo = TowerList[towerIndex]
             const levelStat = towerInfo.stats[tower.level]
@@ -342,9 +349,108 @@ export class TowerClient {
         this.selected = undefined
     }
 
-    startPlacement() {
-        
+    castRay(collisionGroup: string): RaycastResult | undefined{
+        const mousePosition = UserInputService.GetMouseLocation()
+        const ray = Workspace.CurrentCamera!.ViewportPointToRay(mousePosition.X, mousePosition.Y)
+        const rayCastParam = new RaycastParams()
+        rayCastParam.CollisionGroup = collisionGroup
+        const rayResult = Workspace.Raycast(ray.Origin, ray.Direction.mul(1000), rayCastParam)
+        if (rayResult) {
+            return rayResult
+        }
+        return undefined
     }
+
+    checkPlacement(towerType: string, part: BasePart) {
+        if(part.GetAttribute("Placement") === towerType) {
+            return true
+        }
+        return false
+    }
+
+    startPlacement(index: number) {
+        const tower = this.towerManager.cards[index]
+        const highLights = this.map.HighLights
+        highLights.GetChildren().forEach((obj) => {
+            if (obj.IsA("Highlight")) {
+                obj.FillTransparency = 1
+                obj.OutlineTransparency = 1
+                obj.Enabled = true
+                let fillT = 0.5
+                if (obj.Name === tower.placement.type) {
+                    obj.FillColor = Color3.fromRGB(0, 255, 0)
+                    fillT = 0.3
+                }
+                else {
+                    obj.FillColor = Color3.fromRGB(255, 0, 0)
+                }
+                const tween = TweenService.Create(obj, new TweenInfo(0.5), {FillTransparency: fillT, OutlineTransparency: 0})
+                tween.Play()
+            }
+        })
+        if(this.placeModel) {
+            this.placeModel.Destroy()
+        }
+        this.placing = index
+    }
+
+    endPlacement() {
+        if (this.placing) {
+            const highlights = this.map.HighLights
+            highlights.GetChildren().forEach((obj) => {
+                if (obj.IsA("Highlight")) {
+                    task.spawn(() => {
+                        const tween = TweenService.Create(obj, new TweenInfo(0.5), {FillTransparency: 1, OutlineTransparency: 1})
+                        tween.Play()
+                        tween.Completed.Wait()
+                        obj.Enabled = false
+                    })
+                }
+            })
+            if (this.placeModel) {
+                this.placeModel.Destroy()
+            }
+            this.placing = undefined
+            this.rayCast = undefined
+        }
+    }
+
+    placeTower() {
+        const ray = this.rayCast
+        if (ray) {
+            const tower = this.towerManager.cards[this.placing!]
+            if (this.checkPlacement(tower.placement.type, ray.Instance)) {
+                GameService.placeTower.Fire(this.placing, ray.Position)
+                this.endPlacement()
+            }
+        }
+    }
+
+    selectTower() {
+        const rayCast = this.castRay("EveryThing")
+        const towers = this.towerManager.towers
+        if (rayCast) {
+            for (let i = 0; i < towers.size(); i++) {
+                if (rayCast.Instance.IsDescendantOf(towers[i].model)) {
+                    this.updateSelection(i)
+                    print("CurrentIndex", this.selected)
+                    Roact.update(this.towerUI, towerUI(this))
+                    return
+                }
+            }
+        }
+        this.updateSelection(undefined)
+    }
+    
+    mouseClick() {
+        if (this.placing) {
+            this.placeTower()
+        }
+        else {
+            this.selectTower()
+        }
+    }
+
 
     update(towerManager: TowerManager, shopManager: ShopManager, coinManager: CoinManager) {
         this.towerManager = towerManager
@@ -352,5 +458,48 @@ export class TowerClient {
         this.coinManager = coinManager
         this.updateSelection(this.selected)
         this.towerUI = Roact.update(this.towerUI, towerUI(this))
+    }
+
+    render() {
+        if(this.placing) {
+            const ray = this.castRay("Towers")
+            this.rayCast = ray
+            const tower = this.towerManager.cards[this.placing]
+            if (ray) {
+                if (!this.placeModel) {
+                    const model = TowerModels.FindFirstChild(tower.name)?.Clone() as Model
+                    this.placeModel = model
+                    model.Parent = Workspace
+                    model.GetDescendants().forEach((part) => {
+                        if (part.IsA("BasePart")) {
+                            part.CollisionGroup = "Towers"
+                            part.Anchored = true
+                            part.CanCollide = true
+                            part.CanTouch = false
+                            part.CanQuery = false
+                            part.Material = Enum.Material.ForceField
+                        }
+                    })
+                }
+                const canPlace = this.checkPlacement(tower.placement.type, ray.Instance)
+                const pos = new Vector3(ray.Position.X, ray.Position.Y + tower.placement.height, ray.Position.Z)
+                this.placeModel.PivotTo(new CFrame(pos))
+                let color = new Color3(1, 0, 0)
+                if (canPlace) {
+                    color = new Color3(0, 1, 0)
+                }
+                this.placeModel.GetDescendants().forEach((part) => {
+                    if (part.IsA("BasePart")) {
+                        part.Color = color
+                    }
+                })
+            }
+            else {
+                if (this.placeModel) {
+                    this.placeModel.Destroy()
+                    this.placeModel = undefined
+                }
+            }
+        }
     }
 }

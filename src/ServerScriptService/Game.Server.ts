@@ -89,9 +89,10 @@ export const GameService = KnitServer.CreateService({
             print("GameLoaded")
             const tdPlayer = new TDPlayer(player)
             this.TdPlayers.set(player.UserId, tdPlayer)
-            this.Client.dataUpdate.Fire(player, tdPlayer)
             task.wait(5)
             tdPlayer.towerManager.place(0, new Vector3(0, 2, -22.5))
+            print("DataUpdated", tdPlayer.towerManager)
+            this.Client.dataUpdate.Fire(player, tdPlayer)
             player.Character?.MoveTo(tdPlayer.mapManager.playerSpawn)
             let count = 0
             let passed = 0
