@@ -1,7 +1,8 @@
 import { ReplicatedStorage, Workspace } from "@rbxts/services"
 import { GetData } from "ReplicatedStorage/Data"
-import { Mob } from "./MobManager"
-import { Tower, TowerInfo, TowerList, TowerPriority } from "ReplicatedStorage/Towers/Towers"
+import { Mob } from "ReplicatedStorage/Mobs/MobMechanics"
+import { Tower, TowerInfo, TowerPriority } from "ReplicatedStorage/Towers/TowerMechanics"
+import { TowerList } from "ReplicatedStorage/Towers/Towers"
 
 export class TowerManager {
     readonly userId: number

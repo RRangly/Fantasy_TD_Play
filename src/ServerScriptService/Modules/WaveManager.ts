@@ -1,5 +1,5 @@
 import { GetData } from "ReplicatedStorage/Data";
-import { MobInfo } from "./MobManager";
+import { MobInfo } from "ReplicatedStorage/Mobs/MobMechanics";
 
 //Mob Distributions
 interface MobDistribution {

@@ -3,7 +3,8 @@ import { Players, ReplicatedStorage, TweenService, UserInputService, Workspace }
 import type { TowerManager } from "ServerScriptService/Modules/TowerManager";
 import type { ShopManager } from "ServerScriptService/Modules/ShopManager";
 import type { CoinManager } from "ServerScriptService/Modules/CoinManager";
-import { Tower, TowerInfo, TowerList } from "ReplicatedStorage/Towers/Towers";
+import { Tower, TowerInfo } from "ReplicatedStorage/Towers/TowerMechanics";
+import { TowerList } from "ReplicatedStorage/Towers/Towers";
 import { GuiAssets } from "ReplicatedStorage/Game/GuiAssets";
 import { KnitClient } from "@rbxts/knit";
 import { t } from "@rbxts/t";
@@ -182,7 +183,18 @@ function towerUI(towerClient: TowerClient) {
             {cardsFrame(towerClient)}
         </GuiAssets.ImageFrame>
         {tower ? <frame Key="SelectFrame" BackgroundTransparency={1} AnchorPoint={new Vector2(0.5,0.5)} Position={new UDim2(0.5,0,0.5,0)} Size={new UDim2(0.35, 0, 0.46, 0)}>
-            <GuiAssets.ImageFrame key="Image" image="rbxassetid://14886212727" size={new UDim2(0.8,0,1.07,0)} position={new UDim2(0.5,0,0.5,0)} anchorPoint={new Vector2(0.5,0.5)}/>  
+            <imagelabel 
+            Key={"Image"}
+            Image={"rbxassetid://14886212727"}
+            Size={new UDim2(0.8, 0, 1.07, 0)}
+            Position={new UDim2(0.5, 0, 0.5, 0)}
+            ZIndex={-1}
+            AnchorPoint={new Vector2(0.5, 0.5)}
+            ScaleType= "Crop"
+            BackgroundTransparency={1}
+            Rotation={90}
+            SizeConstraint={"RelativeXX"}
+            /> 
             <GuiAssets.ImageFrame key="Level" image="rbxassetid://14886195550" size={new UDim2(0.15, 0, 0.22, 0)} position={new UDim2(0,0,0,0)} anchorPoint={new Vector2(0.4,0.3)}>
                 <textlabel
                     Size={new UDim2(0.5, 0, 0.5, 0)} 
@@ -214,8 +226,8 @@ function towerUI(towerClient: TowerClient) {
             <GuiAssets.ImageButton
             key="Priority"
             image="rbxassetid://14886174309"
-            size={new UDim2(0.715, 0, 0.45, 0)}
-            position={new UDim2(0.245, 0, 0.22, 0)}
+            size={new UDim2(0.34, 0, 0.112, 0)}
+            position={new UDim2(0.085, 0, 0.8, 0)}
             anchorPoint={new Vector2(0, 0)}
             maxTextSize={22}
             text1="Priority"
@@ -226,8 +238,8 @@ function towerUI(towerClient: TowerClient) {
             <GuiAssets.ImageButton
             key="Sell"
             image="rbxassetid://14886174309"
-            size={new UDim2(0.715, 0, 0.45, 0)}
-            position={new UDim2(0.245, 0, 0.22, 0)}
+            size={new UDim2(0.34, 0, 0.112, 0)}
+            position={new UDim2(0.085, 0, 0.67, 0)}
             anchorPoint={new Vector2(0, 0)}
             maxTextSize={22}
             text1="Sell"
@@ -279,8 +291,8 @@ function towerUI(towerClient: TowerClient) {
             <GuiAssets.ImageButton
             key="Upgrade"
             image="rbxassetid://14886174309"
-            size={new UDim2(0.715, 0, 0.45, 0)}
-            position={new UDim2(0.245, 0, 0.22, 0)}
+            size={new UDim2(0.34, 0, 0.112, 0)}
+            position={new UDim2(0.65, 0, 0.86, 0)}
             anchorPoint={new Vector2(0, 0)}
             maxTextSize={22}
             text1="Upgrade"

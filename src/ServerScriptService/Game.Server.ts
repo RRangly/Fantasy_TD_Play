@@ -1,16 +1,17 @@
 import { KnitServer, RemoteSignal } from "@rbxts/knit";
+import { RunService } from "@rbxts/services";
 import { BaseManager } from "./Modules/BaseManager";
 import { CoinManager } from "./Modules/CoinManager";
 import { MapManager } from "./Modules/MapManager";
-import { Mob, MobManager } from "./Modules/MobManager";
+import { MobManager } from "./Modules/MobManager";
 import { ShopManager } from "./Modules/ShopManager";
 import { TowerManager } from "./Modules/TowerManager";
 import { TraitsManager } from "./Modules/TraitsManager";
 import { WaveManager } from "./Modules/WaveManager";
 import { GetData, SetData } from "../ReplicatedStorage/Data";
-import { Player } from "@rbxts/knit/Knit/KnitClient";
+import { Mob } from "ReplicatedStorage/Mobs/MobMechanics";
+import { AttackInfo } from "ReplicatedStorage/Towers/TowerMechanics";
 import { t } from "@rbxts/t";
-import { RunService } from "@rbxts/services";
 
 declare global {
     interface KnitServices {
@@ -44,6 +45,7 @@ export class TDPlayer {
     }
     update(deltaTime: number) {
         let towerAtts = new Array<Array<Mob>>()
+        let towerAttNum = new Array<Array<number>>()
         const towers = this.towerManager.towers
         const mobs = this.mobManager.mobs
         for(let mobI = 0; mobI < mobs.size(); mobI++) {
@@ -57,14 +59,21 @@ export class TDPlayer {
                 const tower = towers[towerI]
                 if(tower.offensive && mob.position2D.sub(tower.position2D).Magnitude <= tower.stats[tower.level].range!) {
                     towerAtts[towerI].push(mob)
+                    towerAttNum[towerI].push(mobI)
                 }
             }
         }
+        let mobAtts = new Array<AttackInfo>
         for(let i = 0; i < towers.size(); i++) {
             const tower = towers[i]
             if (tower.offensive) {
                 const att = towers[i].update(deltaTime, towerAtts[i])
-                this.traitsManager.invoke("MobDamage", att)
+                if (att) {
+                    mobAtts.push({
+                        mobIndex: towerAttNum[i][att.mobIndex],
+                        damage: att.damage,
+                    })
+                }
             }
         }
     }
@@ -94,20 +103,13 @@ export const GameService = KnitServer.CreateService({
             print("DataUpdated", tdPlayer.towerManager)
             this.Client.dataUpdate.Fire(player, tdPlayer)
             player.Character?.MoveTo(tdPlayer.mapManager.playerSpawn)
-            let count = 0
             let passed = 0
             task.spawn(() => {
                 tdPlayer.waveManager.startWave()
             })
-            /*
             RunService.Heartbeat.Connect(function(deltaTime: number) {
-                count += 1
-                passed += deltaTime
-                if (count >= 60) {
-                    tdPlayer.update(passed)
-                }
+                tdPlayer.update(passed)
             })
-            */
         })
         this.Client.placeTower.Connect((player: Player, index: unknown, position: unknown) => {
             const data = GetData(player.UserId)

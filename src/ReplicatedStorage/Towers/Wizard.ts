@@ -1,5 +1,5 @@
 import { GetData } from "ReplicatedStorage/Data"
-import { Tower } from "./Towers"
+import { Tower } from "./TowerMechanics"
 
 export const MinigunInfo = {
     name: "minigunner",

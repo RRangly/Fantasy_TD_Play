@@ -2,7 +2,7 @@ import { KnitClient } from "@rbxts/knit";
 import { Players, ReplicatedStorage, RunService, UserInputService } from "@rbxts/services";
 import { GetData } from "ReplicatedStorage/Data";
 import { TowerClient } from "./Modules/TowerClient";
-import { Tower } from "ReplicatedStorage/Towers/Towers";
+import { Tower } from "ReplicatedStorage/Towers/TowerMechanics";
 import Roact from "@rbxts/roact";
 import type { TDPlayer } from "ServerScriptService/Game.server";
 

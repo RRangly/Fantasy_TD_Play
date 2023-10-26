@@ -1,5 +1,6 @@
 import { GetData } from "ReplicatedStorage/Data"
-import { Tower } from "./Towers"
+import { Mob } from "ReplicatedStorage/Mobs/MobMechanics"
+import { Tower, findTarget } from "./TowerMechanics"
 
 export const MinigunInfo = {
     name: "Minigunner",
@@ -53,11 +54,29 @@ export const MinigunInfo = {
     },
     offensive: true,
     image: "NotReady",
-    update: (tower: Tower, deltaTime: number) => {
-        return {
-            mobIndex: 1,
-            dead: false,
-            damage: 1,
+    update: (tower: Tower, deltaTime: number, mobs: Array<Mob>) => {
+        const stat = MinigunInfo.stats[tower.level]
+        if (mobs) {
+            if (!(tower.preActionTime >= stat.preAction)) {
+                tower.preActionTime += deltaTime
+                return
+            }
+            else {
+                tower.actionTime += deltaTime
+                if (tower.actionTime >= stat.actionInterval) {
+                    tower.actionTime = 0
+                    const target = findTarget(mobs, tower.priority)
+                    return {
+                        mobIndex: target,
+                        damage: stat.damage,
+                    }
+                }
+            }
         }
-    }
+        else {
+            tower.actionTime = 0
+            tower.preActionTime = 0
+            return
+        }
+    },
 }

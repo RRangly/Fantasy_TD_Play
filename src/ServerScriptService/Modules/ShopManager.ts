@@ -1,6 +1,6 @@
 import { TowerList } from "ReplicatedStorage/Towers/Towers"
 import { GetData } from "../../ReplicatedStorage/Data"
-import { TowerInfo } from "ReplicatedStorage/Towers/Towers"
+import { TowerInfo } from "ReplicatedStorage/Towers/TowerMechanics"
 import { t } from "@rbxts/t"
 
 export class ShopManager {
