@@ -33,9 +33,9 @@ function shopFrames(shopManager: ShopManager): Roact.Element {
     let frames = []
     for (let i = 0; i < 3; i++) {
         frames[i] = (<ShopSelFrame
-        image={shopItems[i].image}
-        text1={shopItems[i].name}
-        text2={tostring(shopItems[i].cost)}
+        image={shopItems[i].tInfo.image}
+        text1={shopItems[i].tInfo.name}
+        text2={tostring(shopItems[i].tInfo.cost)}
         index={i}
         event={() => {
             GameService.manageShop.Fire("Pick", i)
@@ -67,7 +67,7 @@ function cardsFrame(towerClient: TowerClient): Roact.Element {
         >
             <GuiAssets.ImageFrame
             key={"TowerImage"}
-            image={cards[i].image}
+            image={cards[i].tInfo.image}
             anchorPoint={new Vector2(0.5, 0.5)}
             size={new UDim2(0.8, 0, 0.8, 0)}
             position={new UDim2(0.5, 0, 0.5, 0)}/>
@@ -344,13 +344,13 @@ export class TowerClient {
         if (t.number(towerIndex)) {
             const tower = towers[towerIndex]
             const towerInfo = TowerList[towerIndex]
-            const levelStat = towerInfo.stats[tower.level]
+            const levelStat = towerInfo.tInfo.stats[tower.level]
 
             if(this.selected !== towerIndex && levelStat.range) {
                 this.rangeDisplay = ClientAssets.RangeDisplay.Clone()
                 this.rangeDisplay.Parent = tower.model
                 const towerPos = tower.position
-                const displayPos = new Vector3(towerPos.X, towerPos.Y - towerInfo.placement.height + 0.1, towerPos.Z)
+                const displayPos = new Vector3(towerPos.X, towerPos.Y - towerInfo.tInfo.placement.height + 0.1, towerPos.Z)
                 this.rangeDisplay.Position = displayPos
                 const tween = TweenService.Create(this.rangeDisplay, new TweenInfo(0.5), {Size: new Vector3(levelStat.range * 2, 0.001, levelStat.range * 2)})
                 tween.Play()
@@ -389,7 +389,7 @@ export class TowerClient {
                 obj.OutlineTransparency = 1
                 obj.Enabled = true
                 let fillT = 0.5
-                if (obj.Name === tower.placement.type) {
+                if (obj.Name === tower.tInfo.placement.type) {
                     obj.FillColor = Color3.fromRGB(0, 255, 0)
                     fillT = 0.3
                 }
@@ -431,7 +431,7 @@ export class TowerClient {
         const ray = this.rayCast
         if (ray) {
             const tower = this.towerManager.cards[this.placing!]
-            if (this.checkPlacement(tower.placement.type, ray.Instance)) {
+            if (this.checkPlacement(tower.tInfo.placement.type, ray.Instance)) {
                 GameService.placeTower.Fire(this.placing, ray.Position)
                 this.endPlacement()
             }
@@ -479,7 +479,7 @@ export class TowerClient {
             const tower = this.towerManager.cards[this.placing]
             if (ray) {
                 if (!this.placeModel) {
-                    const model = TowerModels.FindFirstChild(tower.name)?.Clone() as Model
+                    const model = TowerModels.FindFirstChild(tower.tInfo.name)?.Clone() as Model
                     this.placeModel = model
                     model.Parent = Workspace
                     model.GetDescendants().forEach((part) => {
@@ -493,8 +493,8 @@ export class TowerClient {
                         }
                     })
                 }
-                const canPlace = this.checkPlacement(tower.placement.type, ray.Instance)
-                const pos = new Vector3(ray.Position.X, ray.Position.Y + tower.placement.height, ray.Position.Z)
+                const canPlace = this.checkPlacement(tower.tInfo.placement.type, ray.Instance)
+                const pos = new Vector3(ray.Position.X, ray.Position.Y + tower.tInfo.placement.height, ray.Position.Z)
                 this.placeModel.PivotTo(new CFrame(pos))
                 let color = new Color3(1, 0, 0)
                 if (canPlace) {

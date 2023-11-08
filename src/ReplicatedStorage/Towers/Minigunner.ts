@@ -1,6 +1,5 @@
-import { GetData } from "ReplicatedStorage/Data"
-import { Mob } from "ReplicatedStorage/Mobs/MobMechanics"
-import { Tower, findTarget } from "./TowerMechanics"
+import type { Mob } from "ReplicatedStorage/Mobs/MobMechanics"
+import { AttackInfo, Tower, findTarget } from "./TowerMechanics"
 
 export const MinigunInfo = {
     name: "Minigunner",
@@ -54,18 +53,30 @@ export const MinigunInfo = {
     },
     offensive: true,
     image: "NotReady",
-    update: (tower: Tower, deltaTime: number, mobs: Array<Mob>) => {
-        const stat = MinigunInfo.stats[tower.level]
+}
+
+export class Minigunner extends Tower {
+    preActionTime: number
+    actionTime: number
+    constructor(position: Vector3, model: Model) {
+        super(MinigunInfo, position, model)
+        this.preActionTime = 0
+        this.actionTime = 0
+    }
+    update(deltaTime: number, mobs: Array<Mob>): void | AttackInfo {
+        const stat = MinigunInfo.stats[this.level]
         if (mobs) {
-            if (!(tower.preActionTime >= stat.preAction)) {
-                tower.preActionTime += deltaTime
+            if (this.preActionTime < stat.preAction) {
+                this.preActionTime += deltaTime
+                print("NotEnoughTime", this.preActionTime)
                 return
             }
             else {
-                tower.actionTime += deltaTime
-                if (tower.actionTime >= stat.actionInterval) {
-                    tower.actionTime = 0
-                    const target = findTarget(mobs, tower.priority)
+                print("DoingAttack")
+                this.actionTime += deltaTime
+                if (this.actionTime >= stat.actionInterval) {
+                    this.actionTime = 0
+                    const target = findTarget(mobs, this.priority)
                     return {
                         mobIndex: target,
                         damage: stat.damage,
@@ -74,9 +85,11 @@ export const MinigunInfo = {
             }
         }
         else {
-            tower.actionTime = 0
-            tower.preActionTime = 0
+            print("NoMobs")
+            this.actionTime = 0
+            this.preActionTime = 0
             return
         }
-    },
+    }
+
 }

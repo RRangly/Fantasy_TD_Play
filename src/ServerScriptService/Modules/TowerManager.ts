@@ -1,7 +1,7 @@
 import { ReplicatedStorage, Workspace } from "@rbxts/services"
 import { GetData } from "ReplicatedStorage/Data"
 import { Mob } from "ReplicatedStorage/Mobs/MobMechanics"
-import { Tower, TowerInfo, TowerPriority } from "ReplicatedStorage/Towers/TowerMechanics"
+import { TListItem, Tower, TowerPriority } from "ReplicatedStorage/Towers/TowerMechanics"
 import { TowerList } from "ReplicatedStorage/Towers/Towers"
 
 export class TowerManager {
@@ -9,13 +9,13 @@ export class TowerManager {
     readonly towerLimit: number
     energy: number
     towers: Array<Tower>
-    cards: Array<TowerInfo>
+    cards: Array<TListItem>
     constructor(userId: number) {
         this.userId = userId
         this.towerLimit = 20
         this.energy = 50
         this.towers = new Array<Tower>
-        this.cards = new Array<TowerInfo>
+        this.cards = new Array<TListItem>
         this.cards.push(TowerList[0])
     }
     //checks if Placement is valid
@@ -32,8 +32,8 @@ export class TowerManager {
     //Places Tower
     place(cardIndex: number, position: Vector3) {
         const card = this.cards[cardIndex]
-        if (this.checkPlacement(card.placement.type, position) && this.towers.size() < this.towerLimit) {
-            const clone = ReplicatedStorage.TowerModels.FindFirstChild(card.name)
+        if (this.checkPlacement(card.tInfo.placement.type, position) && this.towers.size() < this.towerLimit) {
+            const clone = ReplicatedStorage.TowerModels.FindFirstChild(card.tInfo.name)
             if (clone?.IsA("Model")) {
                 clone.GetChildren().forEach(part => {
                     if (part.IsA("BasePart")) {
@@ -45,9 +45,9 @@ export class TowerManager {
                     }
                 });
                 clone.Parent = Workspace
-                const place = new Vector3(position.X, position.Y + card.placement.height, position.Z)
+                const place = new Vector3(position.X, position.Y + card.tInfo.placement.height, position.Z)
                 clone.PivotTo(new CFrame(place))
-                this.towers.push(new Tower(this.userId, card, place, clone))
+                this.towers.push(new card.tClass(place, clone))
                 delete this.cards[cardIndex]
                 return true
             }
@@ -109,7 +109,7 @@ export class TowerManager {
                 })
             }
             else if (priority === TowerPriority.Strongest) {
-                let highestHealth: number
+                let highestHealth = 0
                 mobs.forEach((mob: Mob) => {
                     const mobVector = mob.position2D
                     const mobDistance = mobVector.sub(towerVector).Magnitude
@@ -121,7 +121,7 @@ export class TowerManager {
                 })
             }
             else if (priority === TowerPriority.Weakest) {
-                let lowestHealth: number
+                let lowestHealth = math.huge
                 mobs.forEach((mob: Mob) => {
                     const mobVector = mob.position2D
                     const mobDistance = mobVector.sub(towerVector).Magnitude

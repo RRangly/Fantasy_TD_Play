@@ -1,4 +1,4 @@
-import { Mob } from "ReplicatedStorage/Mobs/MobMechanics"
+import type { Mob } from "ReplicatedStorage/Mobs/MobMechanics"
 
 //Interfaces for managing towers
 interface towerLevel {
@@ -27,7 +27,11 @@ export interface TowerInfo {
         type: string,
         height: number,
     }
-    readonly update: (tower: Tower, deltaTime: number, mobs: Array<Mob>) => AttackInfo | void
+}
+
+export interface TListItem {
+    tInfo: TowerInfo
+    tClass: new (position: Vector3, model: Model) => Tower
 }
 
 export enum TowerPriority {
@@ -37,42 +41,29 @@ export enum TowerPriority {
 }
 
 //Base class for all towers
-export class Tower {
-    readonly userId: number
-    readonly name: string
-    readonly stats: Array<towerLevel>
-    readonly placement: {
-        area: number,
-        type: string,
-        height: number,
-    }
-    readonly image: string
-    readonly offensive: boolean
-    readonly _update: (tower: Tower, deltaTime: number, mobs: Array<Mob>) => AttackInfo | void
-    level: number
-    position: Vector3
-    position2D: Vector2
-    model: Model
+export abstract class Tower {
+    name: string
+    image: string
+    stats: Array<towerLevel>
+    offensive: boolean
+    readonly towerInfo: TowerInfo
+    readonly position: Vector3
+    readonly position2D: Vector2
+    readonly model: Model
+    abstract update(deltaTime: number, mobs: Array<Mob>): AttackInfo | void
     priority: TowerPriority
-    preActionTime: number
-    actionTime: number
-    constructor(userId: number, info: TowerInfo, position: Vector3, model: Model) {
-        this.userId = userId
+    level: number
+    constructor(info: TowerInfo, position: Vector3, model: Model) {
         this.name = info.name
-        this.stats = info.stats
-        this.placement = info.placement
-        this.offensive = info.offensive
         this.image = info.image
-        this._update = info.update
+        this.stats = info.stats
+        this.offensive = info.offensive
+        this.towerInfo = info
         this.level = 0
         this.position = position
         this.position2D = new Vector2(position.X, position.Z)
         this.model = model
         this.priority = TowerPriority.First
-        this.preActionTime = 0; this.actionTime = 0;
-    }
-    update(deltaTime: number, mobs: Array<Mob>) {
-        return this._update(this, deltaTime, mobs)
     }
 }
 

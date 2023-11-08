@@ -40,7 +40,7 @@ export class TDPlayer {
         this.traitsManager = new TraitsManager(this.userID)
         this.waveManager = new WaveManager(this.userID)
 
-        this.shopManager.reRollFree()
+        //this.shopManager.reRollFree()
         SetData(this.userID, this)
     }
     update(deltaTime: number) {
@@ -58,6 +58,10 @@ export class TDPlayer {
             for(let towerI = 0; towerI < towers.size(); towerI++) {
                 const tower = towers[towerI]
                 if(tower.offensive && mob.position2D.sub(tower.position2D).Magnitude <= tower.stats[tower.level].range!) {
+                    if (!towerAtts[towerI]) {
+                        towerAtts[towerI] = new Array<Mob>()
+                        towerAttNum[towerI] = new Array<number>()
+                    }
                     towerAtts[towerI].push(mob)
                     towerAttNum[towerI].push(mobI)
                 }
@@ -67,8 +71,10 @@ export class TDPlayer {
         for(let i = 0; i < towers.size(); i++) {
             const tower = towers[i]
             if (tower.offensive) {
+                print("TowerOffense")
                 const att = towers[i].update(deltaTime, towerAtts[i])
                 if (att) {
+                    print("TowerAttReturn")
                     mobAtts.push({
                         mobIndex: towerAttNum[i][att.mobIndex],
                         damage: att.damage,
@@ -76,6 +82,7 @@ export class TDPlayer {
                 }
             }
         }
+        this.mobManager.processUpdate(mobAtts)
     }
 }
 
@@ -89,6 +96,7 @@ export const GameService = KnitServer.CreateService({
         placeTower: new RemoteSignal<(index: unknown, position: unknown) => void>(),
         manageTower: new RemoteSignal<(manageType: unknown, towerIndex: unknown) => void>(),
         manageShop: new RemoteSignal<(manageType: unknown, index?: unknown) => void>(),
+        arbitrary: new RemoteSignal<(jimmy: any) => void>(),
         towerUpdate: new RemoteSignal<() => void>(),
         shopUpdate: new RemoteSignal<() => void>(),
     },
@@ -99,16 +107,24 @@ export const GameService = KnitServer.CreateService({
             const tdPlayer = new TDPlayer(player)
             this.TdPlayers.set(player.UserId, tdPlayer)
             task.wait(5)
-            tdPlayer.towerManager.place(0, new Vector3(0, 2, -22.5))
+            //tdPlayer.towerManager.place(0, new Vector3(0, 2, -22.5))
+            print("IsCyclic?", tdPlayer)
             print("DataUpdated", tdPlayer.towerManager)
+            this.Client.arbitrary.Fire(player, tdPlayer.baseManager)
+            this.Client.arbitrary.Fire(player, tdPlayer.coinManager)
+            this.Client.arbitrary.Fire(player, tdPlayer.mapManager)
+            this.Client.arbitrary.Fire(player, tdPlayer.mobManager)
+            this.Client.arbitrary.Fire(player, tdPlayer.shopManager)
+            this.Client.arbitrary.Fire(player, tdPlayer.towerManager)
+            this.Client.arbitrary.Fire(player, tdPlayer.traitsManager)
+            this.Client.arbitrary.Fire(player, tdPlayer.waveManager)
             this.Client.dataUpdate.Fire(player, tdPlayer)
             player.Character?.MoveTo(tdPlayer.mapManager.playerSpawn)
-            let passed = 0
             task.spawn(() => {
                 tdPlayer.waveManager.startWave()
             })
             RunService.Heartbeat.Connect(function(deltaTime: number) {
-                tdPlayer.update(passed)
+                tdPlayer.update(deltaTime)
             })
         })
         this.Client.placeTower.Connect((player: Player, index: unknown, position: unknown) => {

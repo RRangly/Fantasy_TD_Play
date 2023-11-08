@@ -21,7 +21,6 @@ export class Mob {
         this.model.Parent = Workspace.Mobs
         this.model.GetDescendants().forEach(part => {
             if (part.IsA("BasePart")) {
-                //part.Anchored = true
                 part.CollisionGroup = "Mobs"
                 part.CanCollide = true
                 part.SetNetworkOwner(undefined)
@@ -39,11 +38,13 @@ export class Mob {
         this.position2D = new Vector2(waypoints[0].X, waypoints[0].Z)
         let i = 0;
         hum.WalkSpeed = this.walkSpeed
-        waypoints.forEach(waypoint => {
-            i++
-            hum.MoveTo(waypoint)
-            hum.MoveToFinished.Wait()
-        });
+        task.spawn(() => {
+            waypoints.forEach(waypoint => {
+                i++
+                hum.MoveTo(waypoint)
+                hum.MoveToFinished.Wait()
+            });    
+        })
     }
     takeDamage(damage: number) {
         const preHealth = this.health

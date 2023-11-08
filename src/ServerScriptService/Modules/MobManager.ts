@@ -1,6 +1,6 @@
 //Manages Mobs
 import { Mob, MobInfo } from "ReplicatedStorage/Mobs/MobMechanics"
-import { GetData } from "../../ReplicatedStorage/Data"
+import { GetData, SetData } from "../../ReplicatedStorage/Data"
 import { AttackInfo } from "ReplicatedStorage/Towers/TowerMechanics"
 
 //Manages Mobs as a whole, helps access the Mob Instance
@@ -51,11 +51,8 @@ export class MobManager {
         if (waypoints) {
             for (let i = 0; i < spawnList.size(); i++) {
                 const mobInfo = spawnList[i]
-                task.spawn(() => {
-                    const mob = new Mob(mobInfo, waypoints)
-                    mob.position = waypoints[0]
-                    this.mobs.push(mob)
-                })
+                const mob = new Mob(mobInfo, waypoints)
+                this.mobs.push(mob)
                 task.wait(0.2)
             }
         }
@@ -63,8 +60,9 @@ export class MobManager {
     processUpdate(attacks: Array<AttackInfo>) {
         for (let i = 0; i < attacks.size(); i++) {
             this.mobs[attacks[i].mobIndex].health -= attacks[i].damage
+            //print("MobAttacked", this.mobs[attacks[i].mobIndex], attacks[i].damage)
         }
-        for (let i = this.mobs.size() - 1; i >= 0; i++) {
+        for (let i = this.mobs.size() - 1; i >= 0; i--) {
             if (this.mobs[i].health <= 0) {
                 this.mobs[i].remove()
                 this.mobs.remove(i)
