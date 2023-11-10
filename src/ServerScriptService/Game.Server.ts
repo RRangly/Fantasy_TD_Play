@@ -12,7 +12,6 @@ import { GetData, SetData } from "../ReplicatedStorage/Data";
 import { Mob } from "ReplicatedStorage/Mobs/MobMechanics";
 import { AttackInfo } from "ReplicatedStorage/Towers/TowerMechanics";
 import { t } from "@rbxts/t";
-import { Minigunner } from "ReplicatedStorage/Towers/Minigunner";
 import { TowerList } from "ReplicatedStorage/Towers/Towers";
 
 declare global {
@@ -110,16 +109,6 @@ export const GameService = KnitServer.CreateService({
             this.TdPlayers.set(player.UserId, tdPlayer)
             task.wait(5)
             tdPlayer.towerManager.place(0, new Vector3(0, 2, -22.5))
-            print("IsCyclic?", TowerList[0])
-            this.Client.arbitrary.Fire(player, TowerList[0])
-            this.Client.arbitrary.Fire(player, tdPlayer.baseManager)
-            this.Client.arbitrary.Fire(player, tdPlayer.coinManager)
-            this.Client.arbitrary.Fire(player, tdPlayer.mapManager)
-            this.Client.arbitrary.Fire(player, tdPlayer.mobManager)
-            this.Client.arbitrary.Fire(player, tdPlayer.shopManager)
-            this.Client.arbitrary.Fire(player, tdPlayer.towerManager)
-            this.Client.arbitrary.Fire(player, tdPlayer.traitsManager)
-            this.Client.arbitrary.Fire(player, tdPlayer.waveManager)
             this.Client.dataUpdate.Fire(player, tdPlayer)
             player.Character?.MoveTo(tdPlayer.mapManager.playerSpawn)
             task.spawn(() => {

@@ -47,7 +47,7 @@ export class TowerManager {
                 clone.Parent = Workspace
                 const place = new Vector3(position.X, position.Y + card.tInfo.placement.height, position.Z)
                 clone.PivotTo(new CFrame(place))
-                this.towers.push(new card.tClass(place, clone))
+                this.towers.push(card.tClass(place, clone))
                 delete this.cards[cardIndex]
                 return true
             }

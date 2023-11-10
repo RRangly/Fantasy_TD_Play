@@ -31,7 +31,7 @@ export interface TowerInfo {
 
 export interface TListItem {
     tInfo: TowerInfo
-    tClass: new (position: Vector3, model: Model) => Tower
+    tClass: (position: Vector3, model: Model) => Tower
 }
 
 export enum TowerPriority {
@@ -53,11 +53,9 @@ export abstract class Tower {
     abstract readonly model: Model
     abstract actionUp(deltaTime: number, mobs: Array<Mob>): AttackInfo | void
     abstract priority: TowerPriority
-    constructor() {
-        
-    }
 }
 
+//finds the targets based on numerical information provided, within a set group of mobs
 export function findTarget(mobs: Array<Mob>, priority: TowerPriority) {
     const mobsize = mobs.size()
     let target: number

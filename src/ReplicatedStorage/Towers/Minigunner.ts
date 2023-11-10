@@ -54,8 +54,8 @@ export const MinigunInfo = {
     offensive: true,
     image: "NotReady",
 }
-
-export class Minigunner extends Tower {
+//The class itself
+class Minigunner extends Tower {
     name: string
     image: string
     stats: Array<towerLevel>
@@ -111,4 +111,9 @@ export class Minigunner extends Tower {
             return
         }
     }
+}
+
+//Factory function
+export function newMinigunner(position: Vector3, model: Model) {
+    return new Minigunner(position, model)
 }
