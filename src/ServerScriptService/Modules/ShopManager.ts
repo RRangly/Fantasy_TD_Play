@@ -20,7 +20,7 @@ export class ShopManager {
             coinManager.changeCoins(-cost)
             this.shopItems.clear()
             for (let i = 0; i < 3; i++) {
-                this.shopItems.push(TowerList[math.random(0, TowerList.size() - 1)])
+                this.shopItems.push(table.clone(TowerList[math.random(0, TowerList.size() - 1)]))
             }
             return true
         }
@@ -29,7 +29,7 @@ export class ShopManager {
     reRollFree() {
         this.shopItems.clear()
         for (let i = 0; i < 3; i++) {
-            this.shopItems.push(TowerList[math.random(0, TowerList.size() - 1)])
+            this.shopItems.push(table.clone(TowerList[math.random(0, TowerList.size() - 1)]))
         }
     }
     //Picks the Card, and adds it to towerManager Cards

@@ -16,7 +16,7 @@ export class TowerManager {
         this.energy = 50
         this.towers = new Array<Tower>
         this.cards = new Array<TListItem>
-        this.cards.push(TowerList[0])
+        this.cards.push(table.clone(TowerList[0]))
     }
     //checks if Placement is valid
     checkPlacement(towerType: string, position: Vector3) {

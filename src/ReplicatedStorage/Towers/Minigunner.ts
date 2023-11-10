@@ -1,5 +1,5 @@
 import type { Mob } from "ReplicatedStorage/Mobs/MobMechanics"
-import { AttackInfo, Tower, findTarget } from "./TowerMechanics"
+import { AttackInfo, Tower, TowerInfo, TowerPriority, findTarget, towerLevel } from "./TowerMechanics"
 
 export const MinigunInfo = {
     name: "Minigunner",
@@ -56,14 +56,34 @@ export const MinigunInfo = {
 }
 
 export class Minigunner extends Tower {
+    name: string
+    image: string
+    stats: Array<towerLevel>
+    offensive: boolean
+    level: number
+    position: Vector3
+    position2D: Vector2
+    model: Model
+    priority: TowerPriority
     preActionTime: number
     actionTime: number
     constructor(position: Vector3, model: Model) {
-        super(MinigunInfo, position, model)
+        super()
+        const info = MinigunInfo
+        this.name = info.name
+        this.image = info.image
+        this.stats = info.stats
+        this.offensive = info.offensive
+        this.level = 0
+        this.position = position
+        this.position2D = new Vector2(position.X, position.Z)
+        this.model = model
+        this.priority = TowerPriority.First
         this.preActionTime = 0
         this.actionTime = 0
+        print("new")
     }
-    update(deltaTime: number, mobs: Array<Mob>): void | AttackInfo {
+    actionUp(deltaTime: number, mobs: Array<Mob>): void | AttackInfo {
         const stat = MinigunInfo.stats[this.level]
         if (mobs) {
             if (this.preActionTime < stat.preAction) {
@@ -91,5 +111,4 @@ export class Minigunner extends Tower {
             return
         }
     }
-
 }

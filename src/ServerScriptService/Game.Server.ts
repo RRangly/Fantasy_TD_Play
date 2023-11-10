@@ -12,6 +12,8 @@ import { GetData, SetData } from "../ReplicatedStorage/Data";
 import { Mob } from "ReplicatedStorage/Mobs/MobMechanics";
 import { AttackInfo } from "ReplicatedStorage/Towers/TowerMechanics";
 import { t } from "@rbxts/t";
+import { Minigunner } from "ReplicatedStorage/Towers/Minigunner";
+import { TowerList } from "ReplicatedStorage/Towers/Towers";
 
 declare global {
     interface KnitServices {
@@ -40,7 +42,7 @@ export class TDPlayer {
         this.traitsManager = new TraitsManager(this.userID)
         this.waveManager = new WaveManager(this.userID)
 
-        //this.shopManager.reRollFree()
+        this.shopManager.reRollFree()
         SetData(this.userID, this)
     }
     update(deltaTime: number) {
@@ -72,7 +74,7 @@ export class TDPlayer {
             const tower = towers[i]
             if (tower.offensive) {
                 print("TowerOffense")
-                const att = towers[i].update(deltaTime, towerAtts[i])
+                const att = towers[i].actionUp(deltaTime, towerAtts[i])
                 if (att) {
                     print("TowerAttReturn")
                     mobAtts.push({
@@ -107,9 +109,9 @@ export const GameService = KnitServer.CreateService({
             const tdPlayer = new TDPlayer(player)
             this.TdPlayers.set(player.UserId, tdPlayer)
             task.wait(5)
-            //tdPlayer.towerManager.place(0, new Vector3(0, 2, -22.5))
-            print("IsCyclic?", tdPlayer)
-            print("DataUpdated", tdPlayer.towerManager)
+            tdPlayer.towerManager.place(0, new Vector3(0, 2, -22.5))
+            print("IsCyclic?", TowerList[0])
+            this.Client.arbitrary.Fire(player, TowerList[0])
             this.Client.arbitrary.Fire(player, tdPlayer.baseManager)
             this.Client.arbitrary.Fire(player, tdPlayer.coinManager)
             this.Client.arbitrary.Fire(player, tdPlayer.mapManager)

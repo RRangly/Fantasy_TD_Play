@@ -1,7 +1,7 @@
 import type { Mob } from "ReplicatedStorage/Mobs/MobMechanics"
 
 //Interfaces for managing towers
-interface towerLevel {
+export interface towerLevel {
     readonly levelName: string
     readonly cost: number
     readonly energyUse?: number
@@ -42,28 +42,19 @@ export enum TowerPriority {
 
 //Base class for all towers
 export abstract class Tower {
-    name: string
-    image: string
-    stats: Array<towerLevel>
-    offensive: boolean
-    readonly towerInfo: TowerInfo
-    readonly position: Vector3
-    readonly position2D: Vector2
-    readonly model: Model
-    abstract update(deltaTime: number, mobs: Array<Mob>): AttackInfo | void
-    priority: TowerPriority
-    level: number
-    constructor(info: TowerInfo, position: Vector3, model: Model) {
-        this.name = info.name
-        this.image = info.image
-        this.stats = info.stats
-        this.offensive = info.offensive
-        this.towerInfo = info
-        this.level = 0
-        this.position = position
-        this.position2D = new Vector2(position.X, position.Z)
-        this.model = model
-        this.priority = TowerPriority.First
+    abstract readonly name: string
+    abstract readonly image: string
+    abstract readonly stats: Array<towerLevel>
+    abstract readonly offensive: boolean
+    //abstract readonly towerInfo: TowerInfo
+    abstract level: number
+    abstract readonly position: Vector3
+    abstract readonly position2D: Vector2
+    abstract readonly model: Model
+    abstract actionUp(deltaTime: number, mobs: Array<Mob>): AttackInfo | void
+    abstract priority: TowerPriority
+    constructor() {
+        
     }
 }
 
