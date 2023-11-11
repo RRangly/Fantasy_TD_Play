@@ -8,9 +8,9 @@ export const MinigunInfo = {
         {
             levelName: "basic",
             preAction: 1,
-            actionInterval: 0.2,
+            actionInterval: 0.1,
             range: 24,
-            damage: 1,
+            damage: 5,
             cost: 250,
         },
         {
@@ -81,21 +81,18 @@ class Minigunner extends Tower {
         this.priority = TowerPriority.First
         this.preActionTime = 0
         this.actionTime = 0
-        print("new")
     }
     actionUp(deltaTime: number, mobs: Array<Mob>): void | AttackInfo {
         const stat = MinigunInfo.stats[this.level]
         if (mobs) {
             if (this.preActionTime < stat.preAction) {
                 this.preActionTime += deltaTime
-                print("NotEnoughTime", this.preActionTime)
                 return
             }
             else {
-                print("DoingAttack")
                 this.actionTime += deltaTime
                 if (this.actionTime >= stat.actionInterval) {
-                    this.actionTime = 0
+                    this.actionTime -= stat.actionInterval
                     const target = findTarget(mobs, this.priority)
                     return {
                         mobIndex: target,
@@ -105,7 +102,6 @@ class Minigunner extends Tower {
             }
         }
         else {
-            print("NoMobs")
             this.actionTime = 0
             this.preActionTime = 0
             return

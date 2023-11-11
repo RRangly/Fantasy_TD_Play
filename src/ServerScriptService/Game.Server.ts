@@ -68,14 +68,12 @@ export class TDPlayer {
                 }
             }
         }
-        let mobAtts = new Array<AttackInfo>
+        let mobAtts = new Array<AttackInfo>()
         for(let i = 0; i < towers.size(); i++) {
             const tower = towers[i]
             if (tower.offensive) {
-                print("TowerOffense")
                 const att = towers[i].actionUp(deltaTime, towerAtts[i])
                 if (att) {
-                    print("TowerAttReturn")
                     mobAtts.push({
                         mobIndex: towerAttNum[i][att.mobIndex],
                         damage: att.damage,
@@ -83,7 +81,10 @@ export class TDPlayer {
                 }
             }
         }
-        this.mobManager.processUpdate(mobAtts)
+        const baseDmg = this.mobManager.processUpdate(mobAtts)
+        for (let i = 0; i < baseDmg.size(); i++) {
+            this.baseManager.health -= baseDmg[i]
+        }
     }
 }
 
@@ -92,14 +93,14 @@ export const GameService = KnitServer.CreateService({
     TdPlayers: new Map<Number, TDPlayer>(),
 
     Client: {
+        gameStart: new RemoteSignal<(tdPlayer: TDPlayer) => void>(),
         dataUpdate: new RemoteSignal<(tdPlayer: TDPlayer) => void>(),
         gameLoaded: new RemoteSignal<() => void>(),
         placeTower: new RemoteSignal<(index: unknown, position: unknown) => void>(),
         manageTower: new RemoteSignal<(manageType: unknown, towerIndex: unknown) => void>(),
         manageShop: new RemoteSignal<(manageType: unknown, index?: unknown) => void>(),
-        arbitrary: new RemoteSignal<(jimmy: any) => void>(),
-        towerUpdate: new RemoteSignal<() => void>(),
-        shopUpdate: new RemoteSignal<() => void>(),
+        towerUpdate: new RemoteSignal<(data: TDPlayer) => void>(),
+        shopUpdate: new RemoteSignal<(data: TDPlayer) => void>(),
     },
     
     KnitInit() {
@@ -109,11 +110,9 @@ export const GameService = KnitServer.CreateService({
             this.TdPlayers.set(player.UserId, tdPlayer)
             task.wait(5)
             tdPlayer.towerManager.place(0, new Vector3(0, 2, -22.5))
-            this.Client.dataUpdate.Fire(player, tdPlayer)
+            this.Client.gameStart.Fire(player, tdPlayer)
             player.Character?.MoveTo(tdPlayer.mapManager.playerSpawn)
-            task.spawn(() => {
-                tdPlayer.waveManager.startWave()
-            })
+            tdPlayer.waveManager.startGame()
             RunService.Heartbeat.Connect(function(deltaTime: number) {
                 tdPlayer.update(deltaTime)
             })
@@ -122,7 +121,7 @@ export const GameService = KnitServer.CreateService({
             const data = GetData(player.UserId)
             if (data?.towerManager && t.number(index) && t.Vector3(position)) {
                 if (data.towerManager.place(index, position)) {
-                    this.Client.towerUpdate.Fire(player)
+                    this.Client.towerUpdate.Fire(player, data)
                 }
             }
         })
@@ -130,7 +129,7 @@ export const GameService = KnitServer.CreateService({
             const data = GetData(player.UserId)
             if(data?.towerManager && t.string(manageType) && t.number(towerIndex)) {
                 if (data.towerManager.manage(manageType, towerIndex)) {
-                    this.Client.towerUpdate.Fire(player)
+                    this.Client.towerUpdate.Fire(player, data)
                 }
             }
         })
@@ -138,7 +137,7 @@ export const GameService = KnitServer.CreateService({
             const data = GetData(player.UserId)
             if (data?.shopManager && t.string(manageType)) {
                 if (data.shopManager.manage(manageType, index)) {
-                    this.Client.shopUpdate.Fire(player)
+                    this.Client.towerUpdate.Fire(player, data)
                 }
             }
         })

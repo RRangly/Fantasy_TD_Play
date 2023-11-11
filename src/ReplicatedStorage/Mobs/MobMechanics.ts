@@ -12,6 +12,7 @@ export class Mob {
     position: Vector3
     position2D: Vector2
     frozen: boolean
+    reachedEnd: boolean
     travelled: number
     constructor(mobInfo: MobInfo, waypoints: Vector3[]) {
         this.spawnTime = os.clock()
@@ -38,12 +39,14 @@ export class Mob {
         this.position2D = new Vector2(waypoints[0].X, waypoints[0].Z)
         let i = 0;
         hum.WalkSpeed = this.walkSpeed
+        this.reachedEnd = false
         task.spawn(() => {
             waypoints.forEach(waypoint => {
                 i++
                 hum.MoveTo(waypoint)
                 hum.MoveToFinished.Wait()
-            });    
+            });
+            this.reachedEnd = true
         })
     }
     takeDamage(damage: number) {

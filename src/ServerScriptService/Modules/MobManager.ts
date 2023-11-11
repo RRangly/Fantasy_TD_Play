@@ -11,37 +11,36 @@ export class MobManager {
         this.userId = userId
         this.mobs = new Array<Mob>()
     }
-    readonly generationFunctions = [ (weight: number) => this.generateDefaultMob(weight), (weight: number) => this.generateSpeedMob(weight), (weight: number) => this.generateTankMob(weight), (weight: number) => this.generateSpecialMob(weight), ]
     //Mob Stat Generation Functions
-    generateDefaultMob(weight: number){
-        const mob = {
-            model: "Zombie",
-            maxHealth: weight * 2,
-            walkSpeed: math.floor((math.log(weight, 1.095) + 5)^(1/7)*6),
+    generateMob(mobType:number, weight: number, round: number) {
+        let mob: MobInfo
+        if (mobType === 0) {
+            mob = {
+                model: "Zombie",
+                maxHealth: math.ceil(weight * 2),
+                walkSpeed: math.floor((1.1^(round/5))*12),
+            }
         }
-        return mob
-    }
-    generateSpeedMob(weight: number) {
-        const mob = {
-            model: "Speedy",
-            maxHealth: math.ceil(weight * 1.5),
-            walkSpeed: math.floor((math.log(weight, 1.095) + 5)^(1/3)*8),
+        else if (mobType === 1) {
+            mob = {
+                model: "Speedy",
+                maxHealth: math.ceil(weight * 1.5),
+                walkSpeed: math.floor((1.13^(round/5))*18),
+            }
         }
-        return mob
-    }
-    generateTankMob(weight: number) {
-        const mob = {
-            model: "Stone_Zombie",
-            maxHealth: math.ceil(weight * 4.5),
-            walkSpeed: math.floor((math.log(weight, 1.095) + 5)^(1/8)*4),
+        else if (mobType === 2) {
+            mob = {
+                model: "Stone_Zombie",
+                maxHealth: math.ceil(weight * 4.5),
+                walkSpeed: math.floor((1.09^(round/5))*8),
+            }
         }
-        return mob
-    } 
-    generateSpecialMob(weight: number) {
-        const mob = {
-            model: "Zombie",
-            maxHealth: math.ceil(weight * 2.5),
-            walkSpeed: math.floor((math.log(weight, 1.095) + 5)^(1/7)*6),
+        else {
+            mob = {
+                model: "Zombie",
+                maxHealth: math.ceil(weight * 2.5),
+                walkSpeed: math.floor((1.1^(round/5))*12),
+            }
         }
         return mob
     }
@@ -60,14 +59,20 @@ export class MobManager {
     processUpdate(attacks: Array<AttackInfo>) {
         for (let i = 0; i < attacks.size(); i++) {
             this.mobs[attacks[i].mobIndex].health -= attacks[i].damage
-            //print("MobAttacked", this.mobs[attacks[i].mobIndex], attacks[i].damage)
         }
+        let returnVal = new Array<number>()
         for (let i = this.mobs.size() - 1; i >= 0; i--) {
-            if (this.mobs[i].health <= 0) {
-                this.mobs[i].remove()
+            const mob = this.mobs[i]
+            if (mob.reachedEnd) {
+                returnVal.push(mob.health)
+                mob.health = 0
+            }
+            if (mob.health <= 0) {
+                mob.remove()
                 this.mobs.remove(i)
             }
         }
+        return returnVal
     }
     //Functions that access the Mob Instance
     takeDamage(mobIndex: number, damage: number) {

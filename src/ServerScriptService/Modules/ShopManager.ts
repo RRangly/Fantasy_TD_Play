@@ -38,6 +38,7 @@ export class ShopManager {
         const coinManager = data!.coinManager
         const towerManager = data!.towerManager
         const tower = this.shopItems[pick]
+        print("Picking", pick)
         const cost = tower.tInfo.stats[0].cost
         if (coinManager && coinManager.coin >= cost) {
             coinManager.changeCoins(-cost)

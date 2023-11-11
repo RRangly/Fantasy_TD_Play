@@ -32,15 +32,18 @@ function shopFrames(shopManager: ShopManager): Roact.Element {
     const shopItems = shopManager.shopItems
     let frames = []
     for (let i = 0; i < 3; i++) {
-        frames[i] = (<ShopSelFrame
-        image={shopItems[i].tInfo.image}
-        text1={shopItems[i].tInfo.name}
-        text2={tostring(shopItems[i].tInfo.cost)}
-        index={i}
-        event={() => {
-            GameService.manageShop.Fire("Pick", i)
-        }}
-        />)
+        if (shopItems[i]) {
+            frames[i] = (<ShopSelFrame
+                image={shopItems[i].tInfo.image}
+                text1={shopItems[i].tInfo.name}
+                text2={tostring(shopItems[i].tInfo.cost)}
+                index={i}
+                event={() => {
+                    print("pick")
+                    GameService.manageShop.Fire("Pick", i)
+                }}
+                />)
+        }
     }
     return <>
     {frames}

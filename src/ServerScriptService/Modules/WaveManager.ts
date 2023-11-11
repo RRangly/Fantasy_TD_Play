@@ -12,7 +12,7 @@ interface MobDistribution {
 let distributions = new Array<Array<number>>()
 distributions[0] = [0, 1, 0, 0],
 distributions[1] = [0, 0, 1, 0],
-distributions[2] = [0.6, 0.15, 0.15, 1]
+distributions[2] = [0.6, 0.15, 0.15, 0.1]
 
 export class WaveManager {
     readonly userId: number
@@ -44,21 +44,30 @@ export class WaveManager {
             mobDis = distributions[1]
         }
         else {
-            totalMob = math.floor(weight / math.random(10, 12))
+            totalMob = math.floor(weight / math.random(13, 15))
             mobDis = distributions[2]
         }
-        const mobWeight = math.floor(weight / 28)
-        print("TotalMob", totalMob)
+        const mobWeight = math.floor(weight / 32)
         let toSpawn = new Array<MobInfo>()
         for (let mobType = 0; mobType < 4; mobType++) {
             const mobAmount = math.ceil(totalMob * mobDis[mobType])
             for (let i = 0; i < mobAmount; i++) {
-                const mob = mobManager?.generationFunctions[mobType](mobWeight)
+                const mob = mobManager.generateMob(mobType, mobWeight, this.currentWave)
                 if (mob) {
                     toSpawn.push(mob)
                 }
             }
         }
-        mobManager?.spawnWave(toSpawn)
+        mobManager.spawnWave(toSpawn)
+    }
+
+    //initiate a new game, spawning waves infinitely
+    startGame() {
+        task.spawn(() => {
+            while (true) {
+                this.startWave()
+                task.wait(10)
+            }
+        }) 
     }
 }

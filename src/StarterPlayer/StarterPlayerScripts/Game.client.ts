@@ -14,11 +14,9 @@ interface Client {
     TowerClient: TowerClient
 }
 
-GameService.dataUpdate.Connect((data: TDPlayer) => {
-    if (!data) {
-        return
-    }
-    const clientObj: Client = {
+let clientObj: Client
+GameService.gameStart.Connect((data: TDPlayer) => {
+    clientObj = {
         TowerClient: new TowerClient(data.towerManager, data.shopManager, data.coinManager)
     }
     RunService.RenderStepped.Connect(() => {
@@ -43,6 +41,10 @@ GameService.dataUpdate.Connect((data: TDPlayer) => {
             }
         }
     })
+})
+
+GameService.towerUpdate.Connect((data: TDPlayer) => {
+    clientObj.TowerClient.update(data.towerManager, data.shopManager, data.coinManager)
 })
 
 if (Player.Character) {

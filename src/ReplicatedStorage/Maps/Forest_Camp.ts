@@ -1,6 +1,6 @@
 export = {
     waypoints: [
-        new Vector3(-46.3, 0, -25.375),
+        new Vector3(-46.3, 5, -25.375),
         new Vector3(-17, 0, -25.375),
         new Vector3(-17, 0, -14.375),
         new Vector3(11, 0, -14.375),
