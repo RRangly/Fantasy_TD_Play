@@ -28,6 +28,7 @@ interface SelectFrameProps extends Roact.PropsWithChildren{
     event: () => void
 }
 
+//shop purchase menu
 function shopFrames(shopManager: ShopManager): Roact.Element {
     const shopItems = shopManager.shopItems
     let frames = []
@@ -49,43 +50,7 @@ function shopFrames(shopManager: ShopManager): Roact.Element {
     {frames}
     </>
 }
-
-function cardsFrame(towerClient: TowerClient): Roact.Element {
-    const cards = towerClient.towerManager.cards
-    let frames = []
-    for (let i = 0; i < cards.size(); i++) {
-        frames[i] = <imagebutton
-        Key={tostring(i)}
-        Image="rbxassetid://14886195550"
-        Size={new UDim2(0.1, 0, 1, 0)}
-        Position={new UDim2(0.1 * i, 0, 0, 0)}
-        AnchorPoint={new Vector2(0,0)}
-        BackgroundTransparency={1}
-        ScaleType={"Crop"}
-        Event={{
-            MouseButton1Down: () => {
-                
-            }
-        }}
-        >
-            <GuiAssets.ImageFrame
-            key={"TowerImage"}
-            image={cards[i].tInfo.image}
-            anchorPoint={new Vector2(0.5, 0.5)}
-            size={new UDim2(0.8, 0, 0.8, 0)}
-            position={new UDim2(0.5, 0, 0.5, 0)}/>
-        </imagebutton>
-    }
-    return (
-    <frame
-    Key="Cards"
-    Size={new UDim2(0.9, 0, 0.34, 0)}
-    Position={new UDim2(0.04, 0, 0.05, 0)}
-    BackgroundTransparency={1}>
-        {frames}
-    </frame>)
-}
-
+//individual frame of the shop purchase menu
 function ShopSelFrame(props: SelectFrameProps): Roact.Element {
     return (
         <imagebutton
@@ -134,6 +99,43 @@ function ShopSelFrame(props: SelectFrameProps): Roact.Element {
     )
 }
 
+//card placing frame
+function cardsFrame(towerClient: TowerClient): Roact.Element {
+    const cards = towerClient.towerManager.cards
+    let frames = []
+    for (let i = 0; i < cards.size(); i++) {
+        frames[i] = <imagebutton
+        Key={tostring(i)}
+        Image="rbxassetid://14886195550"
+        Size={new UDim2(0.1, 0, 1, 0)}
+        Position={new UDim2(0.1 * i, 0, 0, 0)}
+        AnchorPoint={new Vector2(0,0)}
+        BackgroundTransparency={1}
+        ScaleType={"Crop"}
+        Event={{
+            MouseButton1Down: () => {
+                towerClient.startPlacement(i)
+            }
+        }}
+        >
+            <GuiAssets.ImageFrame
+            key={"TowerImage"}
+            image={cards[i].tInfo.image}
+            anchorPoint={new Vector2(0.5, 0.5)}
+            size={new UDim2(0.8, 0, 0.8, 0)}
+            position={new UDim2(0.5, 0, 0.5, 0)}/>
+        </imagebutton>
+    }
+    return (
+    <frame
+    Key="Cards"
+    Size={new UDim2(0.9, 0, 0.34, 0)}
+    Position={new UDim2(0.04, 0, 0.05, 0)}
+    BackgroundTransparency={1}>
+        {frames}
+    </frame>)
+}
+
 function towerUI(towerClient: TowerClient) {
     let tower: Tower | undefined = undefined
     if(t.number(towerClient.selected)) {
@@ -167,7 +169,6 @@ function towerUI(towerClient: TowerClient) {
             }
             i++
         }
-
     }
     return (<GuiAssets.BaseFrame>
         <GuiAssets.ImageFrame key= "ShopFrame" image= "rbxassetid://14886161433" size={new UDim2(0.55,0,0.25,0)} position={new UDim2(0.5,0,1,0)} anchorPoint={new Vector2(0.5,1)}>
@@ -405,12 +406,13 @@ export class TowerClient {
         })
         if(this.placeModel) {
             this.placeModel.Destroy()
+            this.placeModel = undefined
         }
         this.placing = index
     }
 
     endPlacement() {
-        if (this.placing) {
+        if (this.placing !== undefined) {
             const highlights = this.map.HighLights
             highlights.GetChildren().forEach((obj) => {
                 if (obj.IsA("Highlight")) {
@@ -424,6 +426,7 @@ export class TowerClient {
             })
             if (this.placeModel) {
                 this.placeModel.Destroy()
+                this.placeModel = undefined
             }
             this.placing = undefined
             this.rayCast = undefined
@@ -455,10 +458,11 @@ export class TowerClient {
             }
         }
         this.updateSelection(undefined)
+        Roact.update(this.towerUI, towerUI(this))
     }
-    
+
     mouseClick() {
-        if (this.placing) {
+        if (this.placing !== undefined) {
             this.placeTower()
         }
         else {
@@ -476,13 +480,14 @@ export class TowerClient {
     }
 
     render() {
-        if(this.placing) {
+        if (this.placing !== undefined) {
             const ray = this.castRay("Towers")
             this.rayCast = ray
             const tower = this.towerManager.cards[this.placing]
             if (ray) {
                 if (!this.placeModel) {
-                    const model = TowerModels.FindFirstChild(tower.tInfo.name)?.Clone() as Model
+                    print("ModelRespawn")
+                    const model = TowerModels.FindFirstChild(tower.tInfo.name)!.Clone() as Model
                     this.placeModel = model
                     model.Parent = Workspace
                     model.GetDescendants().forEach((part) => {
@@ -493,6 +498,9 @@ export class TowerClient {
                             part.CanTouch = false
                             part.CanQuery = false
                             part.Material = Enum.Material.ForceField
+                            if (part.IsA("MeshPart")) {
+                                part.Transparency = 0.5
+                            }
                         }
                     })
                 }

@@ -33,24 +33,22 @@ export class TowerManager {
     place(cardIndex: number, position: Vector3) {
         const card = this.cards[cardIndex]
         if (this.checkPlacement(card.tInfo.placement.type, position) && this.towers.size() < this.towerLimit) {
-            const clone = ReplicatedStorage.TowerModels.FindFirstChild(card.tInfo.name)
-            if (clone?.IsA("Model")) {
-                clone.GetChildren().forEach(part => {
-                    if (part.IsA("BasePart")) {
-                        part.Anchored = true
-                        part.CanCollide = true
-                        part.CanTouch = false
-                        part.CanQuery = false
-                        part.CollisionGroup = "Towers"
-                    }
-                });
-                clone.Parent = Workspace
-                const place = new Vector3(position.X, position.Y + card.tInfo.placement.height, position.Z)
-                clone.PivotTo(new CFrame(place))
-                this.towers.push(card.tClass(place, clone))
-                delete this.cards[cardIndex]
-                return true
-            }
+            const clone = ReplicatedStorage.TowerModels.FindFirstChild(card.tInfo.name)!.Clone() as Model
+            clone.GetDescendants().forEach(part => {
+                if (part.IsA("BasePart")) {
+                    part.Anchored = true
+                    part.CanCollide = true
+                    part.CanTouch = false
+                    part.CanQuery = false
+                    part.CollisionGroup = "Towers"
+                }
+            });
+            clone.Parent = Workspace
+            const place = new Vector3(position.X, position.Y + card.tInfo.placement.height, position.Z)
+            clone.PivotTo(new CFrame(place))
+            this.towers.push(card.tClass(place, clone))
+            delete this.cards[cardIndex]
+            return true
         }
         return false
     }

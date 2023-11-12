@@ -28,6 +28,7 @@ export class ShopManager {
     }
     reRollFree() {
         this.shopItems.clear()
+        print("TSize", TowerList.size())
         for (let i = 0; i < 3; i++) {
             this.shopItems.push(table.clone(TowerList[math.random(0, TowerList.size() - 1)]))
         }
