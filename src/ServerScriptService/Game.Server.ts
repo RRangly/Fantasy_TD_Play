@@ -100,7 +100,7 @@ export const GameService = KnitServer.CreateService({
         manageTower: new RemoteSignal<(manageType: unknown, towerIndex: unknown) => void>(),
         manageShop: new RemoteSignal<(manageType: unknown, index?: unknown) => void>(),
         towerUpdate: new RemoteSignal<(data: TDPlayer) => void>(),
-        shopUpdate: new RemoteSignal<(data: TDPlayer) => void>(),
+        mobUpdate: new RemoteSignal<(mobManager: MobManager) => void>(),
     },
     
     KnitInit() {
@@ -113,8 +113,13 @@ export const GameService = KnitServer.CreateService({
             this.Client.gameStart.Fire(player, tdPlayer)
             player.Character?.MoveTo(tdPlayer.mapManager.playerSpawn)
             tdPlayer.waveManager.startGame()
+            let passed = 0
             RunService.Heartbeat.Connect(function(deltaTime: number) {
                 tdPlayer.update(deltaTime)
+                passed++
+                if (passed > 6) {
+                    GameService.Client.mobUpdate.Fire(player, tdPlayer.mobManager)
+                }
             })
         })
         this.Client.placeTower.Connect((player: Player, index: unknown, position: unknown) => {

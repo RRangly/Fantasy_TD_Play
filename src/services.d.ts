@@ -15,6 +15,20 @@ interface ReplicatedStorage extends Instance {
     }
     ClientAssets: Folder & {
         RangeDisplay: BasePart,
+        HealthDisplay: BasePart & {
+            BackGui: SurfaceGui & {
+                HealthBar: Frame & {
+                    Bar: Frame
+                }
+                HealthText: TextLabel
+            }
+            FrontGui: SurfaceGui & {
+                HealthBar: Frame & {
+                    Bar: Frame
+                }
+                HealthText: TextLabel
+            }
+        }
     }
 }
 
