@@ -118,6 +118,7 @@ export const GameService = KnitServer.CreateService({
                 tdPlayer.update(deltaTime)
                 passed++
                 if (passed > 6) {
+                    passed = 0
                     GameService.Client.mobUpdate.Fire(player, tdPlayer.mobManager)
                 }
             })

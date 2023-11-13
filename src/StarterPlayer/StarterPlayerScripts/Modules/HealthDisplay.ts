@@ -72,16 +72,17 @@ export class HealthDisplay {
                     match = true
                     this.displays[k].update(mob)
                 }
-                else if (!mob.model.FindFirstChild("Head")?.FindFirstChild("HealthDisplayGui")) {
-                    this.displays.push(new display(mob))
-                }
             }
             if (!match) {
                 toremove.push(k)
             }
         }
-        for (let i = toremove.size(); i > 0; i++) {
-            delete this.displays[toremove[i]]
+        for (let i = toremove.size() - 1; i >= 0; i--) this.displays.remove(toremove[i])
+        for (let i = 0; i < mobs.size(); i++) {
+            const mob = mobs[i]
+            if (!mob.model.FindFirstChild("Head")?.FindFirstChild("HealthDisplayGui")) {
+                this.displays.push(new display(mob))
+            }
         }
     }
 }
