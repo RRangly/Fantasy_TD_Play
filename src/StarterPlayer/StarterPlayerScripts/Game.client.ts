@@ -53,7 +53,7 @@ RunService.RenderStepped.Connect(() => {
     }
 })
 
-GameService.towerUpdate.Connect((data: TDPlayer) => {
+GameService.signalUpdate.Connect((data: TDPlayer) => {
     clientObj.TowerClient.update(data.towerManager, data.shopManager, data.coinManager)
 })
 
