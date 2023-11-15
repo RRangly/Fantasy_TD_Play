@@ -10,6 +10,8 @@ export class TowerManager {
     energy: number
     towers: Array<Tower>
     cards: Array<TListItem>
+    attList: Array<Array<Mob>>
+    attNumList: Array<Array<number>>
     constructor(userId: number) {
         this.userId = userId
         this.towerLimit = 20
@@ -17,6 +19,8 @@ export class TowerManager {
         this.towers = new Array<Tower>
         this.cards = new Array<TListItem>
         this.cards.push(table.clone(TowerList[0]))
+        this.attList = new Array<Array<Mob>>()
+        this.attNumList = new Array<Array<number>>()
     }
     //checks if Placement is valid
     checkPlacement(towerType: string, position: Vector3) {

@@ -60,9 +60,7 @@ export class HealthDisplay {
         this.displays = new Array<display>()
     }
 
-    update(mobManager: MobManager) {
-        this.mobManager = mobManager
-        const mobs = mobManager.mobs
+    update(mobs: Array<Mob>) {
         let toremove = new Array<number>()
         for (let k = 0; k < this.displays.size(); k++) {
             let match = false

@@ -7,6 +7,8 @@ import Roact from "@rbxts/roact";
 import type { TDPlayer } from "ServerScriptService/Game.server";
 import type { MobManager } from "ServerScriptService/Modules/MobManager";
 import { HealthDisplay } from "./Modules/HealthDisplay";
+import { HudManager } from "./Modules/Hud";
+import { Mob } from "ReplicatedStorage/Mobs/MobMechanics";
 
 const Player = Players.LocalPlayer
 const PlayerGui = Player.FindFirstChild("PlayerGui") as PlayerGui
@@ -14,6 +16,7 @@ const GameService = KnitClient.GetService("GameService")
 
 interface Client {
     TowerClient: TowerClient
+    Hud: HudManager
     HealthDisplay: HealthDisplay
 }
 
@@ -21,7 +24,8 @@ let clientObj: Client
 GameService.gameStart.Connect((data: TDPlayer) => {
     clientObj = {
         TowerClient: new TowerClient(data.towerManager, data.shopManager, data.coinManager),
-        HealthDisplay: new HealthDisplay(data.mobManager)
+        Hud: new HudManager(data.baseManager, data.coinManager),
+        HealthDisplay: new HealthDisplay(data.mobManager),
     }
     RunService.RenderStepped.Connect(() => {
         clientObj.TowerClient.render()
@@ -53,12 +57,16 @@ RunService.RenderStepped.Connect(() => {
     }
 })
 
-GameService.signalUpdate.Connect((data: TDPlayer) => {
+GameService.towerUpdate.Connect((data: TDPlayer) => {
     clientObj.TowerClient.update(data.towerManager, data.shopManager, data.coinManager)
 })
 
-GameService.mobUpdate.Connect((mobManager: MobManager) => {
-    clientObj.HealthDisplay.update(mobManager)
+GameService.mobUpdate.Connect((mobs: Array<Mob>) => {
+    clientObj.HealthDisplay.update(mobs)
+})
+
+GameService.hudUpdate.Connect((data: TDPlayer) => {
+    clientObj.Hud.update(data.baseManager, data.coinManager)
 })
 
 if (Player.Character) {

@@ -2,6 +2,7 @@
 import { Mob, MobInfo } from "ReplicatedStorage/Mobs/MobMechanics"
 import { GetData, SetData } from "../../ReplicatedStorage/Data"
 import { AttackInfo } from "ReplicatedStorage/Towers/TowerMechanics"
+import { Print } from "@rbxts/knit/Knit/Util/TableUtil"
 
 //Manages Mobs as a whole, helps access the Mob Instance
 export class MobManager {
@@ -18,28 +19,28 @@ export class MobManager {
             mob = {
                 model: "Zombie",
                 maxHealth: math.ceil(weight * 2),
-                walkSpeed: math.floor((1.1^(round/5))*12),
+                walkSpeed: math.floor(math.pow(1.1, (round/5))*12),
             }
         }
         else if (mobType === 1) {
             mob = {
                 model: "Speedy",
                 maxHealth: math.ceil(weight * 1.5),
-                walkSpeed: math.floor((1.13^(round/5))*18),
+                walkSpeed: math.floor(math.pow(1.13, (round/5))*18),
             }
         }
         else if (mobType === 2) {
             mob = {
                 model: "Stone_Zombie",
                 maxHealth: math.ceil(weight * 4.5),
-                walkSpeed: math.floor((1.09^(round/5))*8),
+                walkSpeed: math.floor(math.pow(1.09, (round/5))*8),
             }
         }
         else {
             mob = {
                 model: "Zombie",
                 maxHealth: math.ceil(weight * 2.5),
-                walkSpeed: math.floor((1.1^(round/5))*12),
+                walkSpeed: math.floor(math.pow(1.1, (round/5))*12),
             }
         }
         return mob
@@ -64,6 +65,7 @@ export class MobManager {
         for (let i = this.mobs.size() - 1; i >= 0; i--) {
             const mob = this.mobs[i]
             if (mob.reachedEnd) {
+                print("ReachEnd", "Travelled", (os.clock() - mob.spawnTime) * mob.walkSpeed)
                 returnVal.push(mob.health)
                 mob.health = 0
             }
