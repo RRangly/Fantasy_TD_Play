@@ -113,7 +113,9 @@ export const GameService = KnitServer.CreateService({
         //Server -> Clinet
         gameStart: new RemoteSignal<(tdPlayer: TDPlayer) => void>(),
         towerUpdate: new RemoteSignal<(tdPlayer: TDPlayer) => void>(),
-        hudUpdate: new RemoteSignal<(data: TDPlayer) => void>(),
+        baseUpdate: new RemoteSignal<(health: number) => void>(),
+        coinUpdate: new RemoteSignal<(coin: number) => void>(),
+        waveUpdate: new RemoteSignal<(wave: number)=> void>(),
         mobUpdate: new RemoteSignal<(mobs: Array<Mob>) => void>(),
     },
     
@@ -128,26 +130,25 @@ export const GameService = KnitServer.CreateService({
             tdPlayer.waveManager.startGame()
             let deltaTime = 0
             let deltaTime2 = 0
+            let prevHealth = 0
             RunService.Heartbeat.Connect(function(dt: number) {
                 deltaTime += dt
                 deltaTime2 += dt
                 if (deltaTime > 0.1) {
                     task.spawn(() => {
-                        const prevHealth = tdPlayer.baseManager.health
                         tdPlayer.update(0.1)
                         deltaTime -= 0.1
                         if (tdPlayer.baseManager.health !== prevHealth) {
                         }
                     })
                 }
-                /*
                 if (deltaTime2 > 0.5) {
                     deltaTime2 = 0
-                    task.spawn(() => {
-                        GameService.Client.mobUpdate.Fire(player, tdPlayer.mobManager.mobs)
-                    })
+                    if (tdPlayer.baseManager.health !== prevHealth) {
+                        GameService.Client.baseUpdate.Fire(player, tdPlayer.baseManager.health)
+                        prevHealth = tdPlayer.baseManager.health
+                    }
                 }
-                */
             })
         })
         this.Client.placeTower.Connect((player: Player, index: unknown, position: unknown) => {

@@ -4,17 +4,13 @@ import { GuiAssets } from "ReplicatedStorage/Game/GuiAssets";
 import type { TDPlayer } from "ServerScriptService/Game.server";
 import type { BaseManager } from "ServerScriptService/Modules/BaseManager";
 import type { CoinManager } from "ServerScriptService/Modules/CoinManager";
+import type { WaveManager } from "ServerScriptService/Modules/WaveManager";
 
 
 const PlayerGui = Players.LocalPlayer.FindFirstChild("PlayerGui") as PlayerGui
 
-function healthBar(baseManager: BaseManager) {
-
-}
-
 function hud(hudManager: HudManager): Roact.Element {
-    const baseManager = hudManager.baseManager
-    const maxHealth = baseManager.maxHealth
+    const maxHealth = hudManager.maxHealth
     const hpercent = hudManager.prevHealth / maxHealth
     hudManager.hBarRef = Roact.createRef<Frame>()
     return (<GuiAssets.BaseFrame>
@@ -24,30 +20,49 @@ function hud(hudManager: HudManager): Roact.Element {
                 <uicorner CornerRadius={new UDim(0, 8)}/>
             </frame>
         </frame>
+        
     </GuiAssets.BaseFrame>)
 }
 
 export class HudManager {
     prevHealth: number
-    baseManager: BaseManager
-    coinManager: CoinManager
+    readonly maxHealth: number
+    health: number
+    coin: number
+    wave: number
+    notiFrame!: Ref<Frame>
     hBarRef!: Ref<Frame>
     hud: Roact.Tree
 
-    constructor(baseManager: BaseManager, coinManager: CoinManager) {
-        this.baseManager = baseManager
-        this.coinManager = coinManager
+    constructor(baseManager: BaseManager, coinManager: CoinManager, waveManager: WaveManager) {
+        this.maxHealth = baseManager.maxHealth
+        this.health = baseManager.health
+        this.coin = coinManager.coin
+        this.wave = waveManager.currentWave
         this.prevHealth = baseManager.health
         this.hud = Roact.mount(hud(this), PlayerGui, "Hud")
     }
 
-    update(baseManager: BaseManager, coinManager: CoinManager) {
-        this.prevHealth = baseManager.health
-        this.baseManager = baseManager
-        this.coinManager = coinManager
+    baseUpdate(health: number) {
+        this.health = health
         this.hud = Roact.update(this.hud, hud(this))
-        const hpercent = this.baseManager.health / this.baseManager.maxHealth
+        const hpercent = this.health / this.maxHealth
         const tween = TweenService.Create(this.hBarRef.getValue()!, new TweenInfo(0.1), {Size: new UDim2(hpercent * 0.984, 0, 0.8, 0)})
         tween.Play()
+        this.prevHealth = health
+    }
+
+    coinUpdate(coin: number) {
+        this.coin = coin
+        this.hud = Roact.update(this.hud, hud(this))
+    }
+
+    waveUpdate(wave: number) {
+        this.wave = wave
+        this.hud = Roact.update(this.hud, hud(this))
+    }
+
+    notification(text: string) {
+
     }
 }

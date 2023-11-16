@@ -1,14 +1,16 @@
 import { KnitClient } from "@rbxts/knit";
+import Roact from "@rbxts/roact";
 import { Players, ReplicatedStorage, RunService, UserInputService } from "@rbxts/services";
+import type { BaseManager } from "ServerScriptService/Modules/BaseManager";
+import type { TDPlayer } from "ServerScriptService/Game.server";
+import type { MobManager } from "ServerScriptService/Modules/MobManager";
 import { GetData } from "ReplicatedStorage/Data";
 import { TowerClient } from "./Modules/TowerClient";
 import { Tower } from "ReplicatedStorage/Towers/TowerMechanics";
-import Roact from "@rbxts/roact";
-import type { TDPlayer } from "ServerScriptService/Game.server";
-import type { MobManager } from "ServerScriptService/Modules/MobManager";
 import { HealthDisplay } from "./Modules/HealthDisplay";
 import { HudManager } from "./Modules/Hud";
 import { Mob } from "ReplicatedStorage/Mobs/MobMechanics";
+
 
 const Player = Players.LocalPlayer
 const PlayerGui = Player.FindFirstChild("PlayerGui") as PlayerGui
@@ -24,7 +26,7 @@ let clientObj: Client
 GameService.gameStart.Connect((data: TDPlayer) => {
     clientObj = {
         TowerClient: new TowerClient(data.towerManager, data.shopManager, data.coinManager),
-        Hud: new HudManager(data.baseManager, data.coinManager),
+        Hud: new HudManager(data.baseManager, data.coinManager, data.waveManager),
         HealthDisplay: new HealthDisplay(data.mobManager),
     }
     RunService.RenderStepped.Connect(() => {
@@ -61,12 +63,16 @@ GameService.towerUpdate.Connect((data: TDPlayer) => {
     clientObj.TowerClient.update(data.towerManager, data.shopManager, data.coinManager)
 })
 
-GameService.mobUpdate.Connect((mobs: Array<Mob>) => {
-    clientObj.HealthDisplay.update(mobs)
+GameService.baseUpdate.Connect((health: number) => {
+    clientObj.Hud.baseUpdate(health)
 })
 
-GameService.hudUpdate.Connect((data: TDPlayer) => {
-    clientObj.Hud.update(data.baseManager, data.coinManager)
+GameService.coinUpdate.Connect((coin: number) => {
+    clientObj.Hud.coinUpdate(coin)
+})
+
+GameService.waveUpdate.Connect((wave: number) => {
+    clientObj.Hud.waveUpdate(wave)
 })
 
 if (Player.Character) {

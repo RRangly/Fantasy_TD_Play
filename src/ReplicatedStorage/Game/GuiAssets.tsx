@@ -25,7 +25,7 @@ interface buttonTextProps extends Roact.PropsWithChildren {
 
 function BaseFrame(props: Roact.PropsWithChildren) {
     return (<screengui>
-        <frame Key="BaseFrame" Size={new UDim2(1,0,1,0)} BackgroundTransparency={1}>
+        <frame Key="BaseFrame" Size={new UDim2(1,0,1,0)} BackgroundTransparency={1} Position={new UDim2(0.5, 0, 0.5, 0)} AnchorPoint={new Vector2(0.5, 0.5)}>
             <uiaspectratioconstraint AspectType={"FitWithinMaxSize"} AspectRatio={1.783} DominantAxis={"Width"}/>
             {props[Roact.Children]}
         </frame>

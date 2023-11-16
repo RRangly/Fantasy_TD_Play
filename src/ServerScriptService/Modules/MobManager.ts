@@ -65,7 +65,6 @@ export class MobManager {
         for (let i = this.mobs.size() - 1; i >= 0; i--) {
             const mob = this.mobs[i]
             if (mob.reachedEnd) {
-                print("ReachEnd", "Travelled", (os.clock() - mob.spawnTime) * mob.walkSpeed)
                 returnVal.push(mob.health)
                 mob.health = 0
             }
