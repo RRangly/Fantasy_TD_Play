@@ -30,6 +30,7 @@ interface ReplicatedStorage extends Instance {
             }
         }
     }
+    SoundFX: Folder
 }
 
 interface Workspace extends Instance {

@@ -75,6 +75,13 @@ GameService.waveUpdate.Connect((wave: number) => {
     clientObj.Hud.waveUpdate(wave)
 })
 
+GameService.playSound.Connect((sounds: Array<string>) => {
+    for (let i = 0; i < sounds.size(); i++) {
+        const sound = ReplicatedStorage.SoundFX.FindFirstChild(sounds[i]) as Sound
+        sound.Play()
+    }
+})
+
 if (Player.Character) {
     GameService.gameLoaded.Fire()
 }

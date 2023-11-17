@@ -19,8 +19,35 @@ function hud(hudManager: HudManager): Roact.Element {
             <frame Key= "Bar" Size={new UDim2(hpercent * 0.984, 0, 0.8, 0)} Position={new UDim2(0.008, 0, 0.5, 0)} BackgroundColor3={Color3.fromRGB(45,103,58)} AnchorPoint={new Vector2(0, 0.5)} Ref={hudManager.hBarRef}>
                 <uicorner CornerRadius={new UDim(0, 8)}/>
             </frame>
+            <textlabel
+            Key="CoinText"
+            Size={new UDim2(0.4, 0, 0.7, 0)} 
+            Position={new UDim2(0.1, 0, 1.3, 0)}
+            Text={"Coins:" + hudManager.coin}
+            BackgroundTransparency={1} 
+            Font={"SpecialElite"}
+            TextScaled = {true}
+            TextXAlignment={"Left"}
+            TextYAlignment={"Top"}
+            TextWrapped={true}>
+                <uistroke Color={new Color3()} Thickness={0.3} />
+                <uitextsizeconstraint MaxTextSize={20} MinTextSize={1}/>
+            </textlabel>
+            <textlabel
+            Key="WaveText"
+            Size={new UDim2(0.4, 0, 0.7, 0)} 
+            Position={new UDim2(0.5, 0, 1.3, 0)}
+            Text={"Wave:" + hudManager.wave}
+            BackgroundTransparency={1}
+            Font={"SpecialElite"}
+            TextScaled = {true}
+            TextXAlignment={"Right"}
+            TextYAlignment={"Top"}
+            TextWrapped={true}>
+                <uistroke Color={new Color3()} Thickness={0.3} />
+                <uitextsizeconstraint MaxTextSize={20} MinTextSize={1}/>
+            </textlabel>
         </frame>
-        
     </GuiAssets.BaseFrame>)
 }
 

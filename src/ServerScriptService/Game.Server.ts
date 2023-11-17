@@ -30,6 +30,7 @@ export class TDPlayer {
     shopManager: ShopManager;
     traitsManager: TraitsManager;
     waveManager: WaveManager;
+    sounds: Array<string>;
     constructor(player: Player) {
         this.userID = player.UserId
         this.mapManager = new MapManager("Forest_Camp", new Vector3(0, 0, 0))
@@ -40,6 +41,7 @@ export class TDPlayer {
         this.shopManager = new ShopManager(this.userID)
         this.traitsManager = new TraitsManager(this.userID)
         this.waveManager = new WaveManager(this.userID)
+        this.sounds = new Array<string>()
 
         this.shopManager.reRollFree()
         SetData(this.userID, this)
@@ -86,14 +88,16 @@ export class TDPlayer {
             if (tower.offensive) {
                 const att = towers[i].actionUp(deltaTime, towerAtts[i])
                 if (att) {
+                    const attInfo = att.attInf
                     mobAtts.push({
-                        mobIndex: towerAttNum[i][att.mobIndex],
-                        damage: att.damage,
+                        mobIndex: towerAttNum[i][attInfo.mobIndex],
+                        damage: attInfo.damage,
                     })
+                    this.sounds.push(att.playSound)
                 }
             }
         }
-        const baseDmg = this.mobManager.processUpdate(mobAtts)
+        const baseDmg = this.mobManager.processUpdate(mobAtts, this.coinManager)
         for (let i = 0; i < baseDmg.size(); i++) {
             this.baseManager.health -= baseDmg[i]
         }
@@ -110,13 +114,14 @@ export const GameService = KnitServer.CreateService({
         placeTower: new RemoteSignal<(index: unknown, position: unknown) => void>(),
         manageTower: new RemoteSignal<(manageType: unknown, towerIndex: unknown) => void>(),
         manageShop: new RemoteSignal<(manageType: unknown, index?: unknown) => void>(),
-        //Server -> Clinet
+        //Server -> Client
         gameStart: new RemoteSignal<(tdPlayer: TDPlayer) => void>(),
         towerUpdate: new RemoteSignal<(tdPlayer: TDPlayer) => void>(),
         baseUpdate: new RemoteSignal<(health: number) => void>(),
         coinUpdate: new RemoteSignal<(coin: number) => void>(),
         waveUpdate: new RemoteSignal<(wave: number)=> void>(),
         mobUpdate: new RemoteSignal<(mobs: Array<Mob>) => void>(),
+        playSound: new RemoteSignal<(sounds: Array<string>) => void>(),
     },
     
     KnitInit() {
@@ -127,20 +132,20 @@ export const GameService = KnitServer.CreateService({
             tdPlayer.towerManager.place(0, new Vector3(0, 2, -22.5))
             this.Client.gameStart.Fire(player, tdPlayer)
             player.Character?.MoveTo(tdPlayer.mapManager.playerSpawn)
-            tdPlayer.waveManager.startGame()
             let deltaTime = 0
             let deltaTime2 = 0
             let prevHealth = 0
+            let prevCoin = 0
             RunService.Heartbeat.Connect(function(dt: number) {
                 deltaTime += dt
                 deltaTime2 += dt
                 if (deltaTime > 0.1) {
-                    task.spawn(() => {
-                        tdPlayer.update(0.1)
-                        deltaTime -= 0.1
-                        if (tdPlayer.baseManager.health !== prevHealth) {
-                        }
-                    })
+                    tdPlayer.update(0.1)
+                    deltaTime -= 0.1
+                    if (tdPlayer.sounds.size()) {
+                        GameService.Client.playSound.Fire(player, tdPlayer.sounds)
+                    }
+                    tdPlayer.sounds.clear()
                 }
                 if (deltaTime2 > 0.5) {
                     deltaTime2 = 0
@@ -148,6 +153,17 @@ export const GameService = KnitServer.CreateService({
                         GameService.Client.baseUpdate.Fire(player, tdPlayer.baseManager.health)
                         prevHealth = tdPlayer.baseManager.health
                     }
+                    if (tdPlayer.coinManager.coin !== prevCoin) {
+                        GameService.Client.coinUpdate.Fire(player, tdPlayer.coinManager.coin)
+                        prevCoin = tdPlayer.coinManager.coin
+                    }
+                }
+            })
+            task.spawn(() => {
+                while (true) {
+                    tdPlayer.waveManager.startWave()
+                    GameService.Client.waveUpdate.Fire(player, tdPlayer.waveManager.currentWave)
+                    task.wait(10)
                 }
             })
         })

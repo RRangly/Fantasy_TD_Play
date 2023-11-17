@@ -82,7 +82,7 @@ class Minigunner extends Tower {
         this.preActionTime = 0
         this.actionTime = 0
     }
-    actionUp(deltaTime: number, mobs: Array<Mob>): void | AttackInfo {
+    actionUp(deltaTime: number, mobs: Array<Mob>): void | {attInf: AttackInfo, playSound: string} {
         const stat = MinigunInfo.stats[this.level]
         if (mobs) {
             if (this.preActionTime < stat.preAction) {
@@ -95,8 +95,11 @@ class Minigunner extends Tower {
                     this.actionTime -= stat.actionInterval
                     const target = findTarget(mobs, this.priority)
                     return {
-                        mobIndex: target,
-                        damage: stat.damage,
+                        attInf: {
+                            mobIndex: target,
+                            damage: stat.damage,
+                        },
+                        playSound: "MinigunShot"
                     }
                 }
             }

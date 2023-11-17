@@ -51,7 +51,7 @@ export abstract class Tower {
     abstract readonly position: Vector3
     abstract readonly position2D: Vector2
     abstract readonly model: Model
-    abstract actionUp(deltaTime: number, mobs: Array<Mob>): AttackInfo | void
+    abstract actionUp(deltaTime: number, mobs: Array<Mob>): {attInf: AttackInfo, playSound: string} | void
     abstract priority: TowerPriority
 }
 

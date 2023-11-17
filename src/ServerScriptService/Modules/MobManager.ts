@@ -3,6 +3,7 @@ import { Mob, MobInfo } from "ReplicatedStorage/Mobs/MobMechanics"
 import { GetData, SetData } from "../../ReplicatedStorage/Data"
 import { AttackInfo } from "ReplicatedStorage/Towers/TowerMechanics"
 import { Print } from "@rbxts/knit/Knit/Util/TableUtil"
+import { CoinManager } from "./CoinManager"
 
 //Manages Mobs as a whole, helps access the Mob Instance
 export class MobManager {
@@ -57,10 +58,15 @@ export class MobManager {
             }
         }
     }
-    processUpdate(attacks: Array<AttackInfo>) {
+    processUpdate(attacks: Array<AttackInfo>, coinManager: CoinManager) {
+        let money = 0
         for (let i = 0; i < attacks.size(); i++) {
             this.mobs[attacks[i].mobIndex].health -= attacks[i].damage
+            if (!(this.mobs[attacks[i].mobIndex].health < 0)) {
+                money += attacks[i].damage
+            }
         }
+        coinManager.changeCoins(money)
         let returnVal = new Array<number>()
         for (let i = this.mobs.size() - 1; i >= 0; i--) {
             const mob = this.mobs[i]
