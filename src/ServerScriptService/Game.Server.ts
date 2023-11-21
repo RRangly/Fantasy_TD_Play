@@ -89,11 +89,18 @@ export class TDPlayer {
                 const att = towers[i].actionUp(deltaTime, towerAtts[i])
                 if (att) {
                     const attInfo = att.attInf
-                    mobAtts.push({
-                        mobIndex: towerAttNum[i][attInfo.mobIndex],
-                        damage: attInfo.damage,
-                    })
-                    this.sounds.push(att.playSound)
+                    if (attInfo) {
+                        mobAtts.push({
+                            mobIndex: towerAttNum[i][attInfo.mobIndex],
+                            damage: attInfo.damage,
+                        })
+                    }
+                    if (att.playSound) {
+                        this.sounds.push(att.playSound)
+                    }
+                    if (att.energy) {
+                        this.towerManager.energy -= att.energy
+                    }
                 }
             }
         }

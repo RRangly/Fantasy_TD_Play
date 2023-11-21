@@ -29,6 +29,12 @@ export interface TowerInfo {
     }
 }
 
+export interface AttackInstance {
+    attInf?: AttackInfo,
+    playSound?: string,
+    energy?: number,
+}
+
 export interface TListItem {
     tInfo: TowerInfo
     tClass: (position: Vector3, model: Model) => Tower
@@ -51,7 +57,7 @@ export abstract class Tower {
     abstract readonly position: Vector3
     abstract readonly position2D: Vector2
     abstract readonly model: Model
-    abstract actionUp(deltaTime: number, mobs: Array<Mob>): {attInf: AttackInfo, playSound: string} | void
+    abstract actionUp(deltaTime: number, mobs: Array<Mob>): AttackInstance | void
     abstract priority: TowerPriority
 }
 

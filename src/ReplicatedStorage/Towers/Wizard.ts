@@ -1,5 +1,5 @@
 import type { Mob } from "ReplicatedStorage/Mobs/MobMechanics"
-import { AttackInfo, Tower, TowerInfo, TowerPriority, findTarget, towerLevel } from "./TowerMechanics"
+import { AttackInfo, AttackInstance, Tower, TowerInfo, TowerPriority, findTarget, towerLevel } from "./TowerMechanics"
 
 export const WizardInfo = {
     name: "Wizard",
@@ -82,7 +82,7 @@ class Wizard extends Tower {
         this.preActionTime = 0
         this.actionTime = 0
     }
-    actionUp(deltaTime: number, mobs: Array<Mob>): void | {attInf: AttackInfo, playSound: string} {
+    actionUp(deltaTime: number, mobs: Array<Mob>): void | AttackInstance {
         const stat = WizardInfo.stats[this.level]
         if (mobs) {
             if (this.preActionTime < stat.preAction) {
@@ -99,7 +99,8 @@ class Wizard extends Tower {
                             mobIndex: target,
                             damage: stat.damage,
                         },
-                        playSound: "MinigunShot"
+                        playSound: "MinigunShot",
+                        energy: -2,
                     }
                 }
             }
