@@ -1,5 +1,4 @@
-import Roact, { Children } from "@rbxts/roact"
-import type { ShopManager } from "ServerScriptService/Modules/ShopManager"
+import Roact from "@rbxts/roact"
 
 interface imageFrameProps extends Roact.PropsWithChildren {
     key: string,
