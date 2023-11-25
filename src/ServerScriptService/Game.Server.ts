@@ -4,7 +4,6 @@ import { BaseManager } from "./Modules/BaseManager";
 import { CoinManager } from "./Modules/CoinManager";
 import { MapManager } from "./Modules/MapManager";
 import { MobManager } from "./Modules/MobManager";
-import { ShopManager } from "./Modules/ShopManager";
 import { TowerManager } from "./Modules/TowerManager";
 import { TraitsManager } from "./Modules/TraitsManager";
 import { WaveManager } from "./Modules/WaveManager";
@@ -27,7 +26,6 @@ export class TDPlayer {
     baseManager: BaseManager;
     coinManager: CoinManager;
     mapManager: MapManager;
-    shopManager: ShopManager;
     traitsManager: TraitsManager;
     waveManager: WaveManager;
     sounds: Array<string>;
@@ -38,12 +36,9 @@ export class TDPlayer {
         this.mobManager = new MobManager(this.userID)
         this.baseManager = new BaseManager(this.userID)
         this.coinManager = new CoinManager(this.userID)
-        this.shopManager = new ShopManager(this.userID)
         this.traitsManager = new TraitsManager(this.userID)
         this.waveManager = new WaveManager(this.userID)
         this.sounds = new Array<string>()
-
-        this.shopManager.reRollFree()
         SetData(this.userID, this)
     }
     mobUpdate() {
@@ -186,14 +181,6 @@ export const GameService = KnitServer.CreateService({
             const data = GetData(player.UserId)
             if(data?.towerManager && t.string(manageType) && t.number(towerIndex)) {
                 if (data.towerManager.manage(manageType, towerIndex)) {
-                    this.Client.towerUpdate.Fire(player, data)
-                }
-            }
-        })
-        this.Client.manageShop.Connect((player: Player, manageType: unknown, index?: unknown) => {
-            const data = GetData(player.UserId)
-            if (data?.shopManager && t.string(manageType)) {
-                if (data.shopManager.manage(manageType, index)) {
                     this.Client.towerUpdate.Fire(player, data)
                 }
             }

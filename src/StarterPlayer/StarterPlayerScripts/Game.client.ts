@@ -25,7 +25,7 @@ interface Client {
 let clientObj: Client
 GameService.gameStart.Connect((data: TDPlayer) => {
     clientObj = {
-        TowerClient: new TowerClient(data.towerManager, data.shopManager, data.coinManager),
+        TowerClient: new TowerClient(data.towerManager, data.coinManager),
         Hud: new HudManager(data.baseManager, data.coinManager, data.waveManager),
         HealthDisplay: new HealthDisplay(data.mobManager),
     }
@@ -60,7 +60,7 @@ RunService.RenderStepped.Connect(() => {
 })
 
 GameService.towerUpdate.Connect((data: TDPlayer) => {
-    clientObj.TowerClient.update(data.towerManager, data.shopManager, data.coinManager)
+    clientObj.TowerClient.update(data.towerManager, data.coinManager)
 })
 
 GameService.baseUpdate.Connect((health: number) => {

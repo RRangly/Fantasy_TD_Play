@@ -18,7 +18,7 @@ export class TowerManager {
         this.energy = 50
         this.towers = new Array<Tower>
         this.cards = new Array<TListItem>
-        this.cards.push(table.clone(TowerList[0]))
+        this.cards = table.clone(TowerList)
         this.attList = new Array<Array<Mob>>()
         this.attNumList = new Array<Array<number>>()
     }
@@ -51,7 +51,7 @@ export class TowerManager {
             const place = new Vector3(position.X, position.Y + card.tInfo.placement.height, position.Z)
             clone.PivotTo(new CFrame(place))
             this.towers.push(card.tClass(place, clone))
-            delete this.cards[cardIndex]
+            //delete this.cards[cardIndex]
             return true
         }
         return false

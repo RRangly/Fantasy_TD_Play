@@ -3,6 +3,8 @@ import { GetData } from "../../ReplicatedStorage/Data"
 import { TListItem, TowerInfo } from "ReplicatedStorage/Towers/TowerMechanics"
 import { t } from "@rbxts/t"
 
+/**
+ * Legacy shopmanager code
 export class ShopManager {
     readonly userId: number
     reRolled: number
@@ -60,3 +62,4 @@ export class ShopManager {
         return false
     }
 }
+*/
