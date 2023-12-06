@@ -613,7 +613,7 @@ function towerUI(towerClient: TowerClient): Roact.Element {
             BackgroundTransparency={1}
             Rotation={90}
             SizeConstraint={"RelativeXX"}
-            /> 
+            />
             <GuiAssets.ImageFrame key="Level" image="rbxassetid://14886195550" size={new UDim2(0.15, 0, 0.22, 0)} position={new UDim2(0,0,0,0)} anchorPoint={new Vector2(0.4,0.3)}>
                 <textlabel
                     Size={new UDim2(0.5, 0, 0.5, 0)} 

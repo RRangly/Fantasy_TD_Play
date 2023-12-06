@@ -1,5 +1,5 @@
 import { KnitServer, RemoteSignal } from "@rbxts/knit";
-import { RunService } from "@rbxts/services";
+import { DataStoreService, RunService } from "@rbxts/services";
 import { BaseManager } from "./Modules/BaseManager";
 import { CoinManager } from "./Modules/CoinManager";
 import { MapManager } from "./Modules/MapManager";
@@ -19,6 +19,12 @@ declare global {
     }
 }
 
+interface PlayerData {
+    towerManager: {
+        selected: []
+    }
+}
+
 export class TDPlayer {
     userID: number;
     towerManager: TowerManager;
@@ -29,10 +35,10 @@ export class TDPlayer {
     traitsManager: TraitsManager;
     waveManager: WaveManager;
     sounds: Array<string>;
-    constructor(player: Player) {
+    constructor(player: Player, data: PlayerData) {
         this.userID = player.UserId
         this.mapManager = new MapManager("Forest_Camp", new Vector3(0, 0, 0))
-        this.towerManager = new TowerManager(this.userID)
+        this.towerManager = new TowerManager(this.userID, data.towerManager.selected)
         this.mobManager = new MobManager(this.userID)
         this.baseManager = new BaseManager(this.userID)
         this.coinManager = new CoinManager(this.userID)
@@ -40,18 +46,6 @@ export class TDPlayer {
         this.waveManager = new WaveManager(this.userID)
         this.sounds = new Array<string>()
         SetData(this.userID, this)
-    }
-    mobUpdate() {
-        const towers = this.towerManager.towers
-        const mobs = this.mobManager.mobs
-        for (let mI = 0; mI < mobs.size(); mI++) {
-            const mob = mobs[mI]
-            const pos = mob.humanoid.RootPart!.Position
-            const travelled = (os.clock() - mob.spawnTime) * mob.walkSpeed
-            mob.position = pos
-            mob.position2D = new Vector2(pos.X, pos.Z)
-            mob.travelled = travelled
-        }
     }
     update(deltaTime: number) {
         let towerAtts = new Array<Array<Mob>>()
@@ -128,7 +122,9 @@ export const GameService = KnitServer.CreateService({
     
     KnitInit() {
         this.Client.gameLoaded.Connect((player: Player) => {
-            const tdPlayer = new TDPlayer(player)
+            const datas = DataStoreService.GetDataStore("PlayerDatas", "Players")
+            const pData = datas.GetAsync(tostring(player.UserId))[0] as PlayerData
+            const tdPlayer = new TDPlayer(player, pData)
             this.TdPlayers.set(player.UserId, tdPlayer)
             task.wait(5)
             tdPlayer.towerManager.place(0, new Vector3(0, 2, -22.5))

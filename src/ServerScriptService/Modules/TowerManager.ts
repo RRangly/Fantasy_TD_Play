@@ -2,7 +2,7 @@ import { ReplicatedStorage, Workspace } from "@rbxts/services"
 import { GetData } from "ReplicatedStorage/Data"
 import { Mob } from "ReplicatedStorage/Mobs/MobMechanics"
 import { TListItem, Tower, TowerPriority } from "ReplicatedStorage/Towers/TowerMechanics"
-import { TowerList } from "ReplicatedStorage/Towers/Towers"
+import { StringList, TowerList } from "ReplicatedStorage/Towers/Towers"
 
 export class TowerManager {
     readonly userId: number
@@ -12,13 +12,15 @@ export class TowerManager {
     cards: Array<TListItem>
     attList: Array<Array<Mob>>
     attNumList: Array<Array<number>>
-    constructor(userId: number) {
+    constructor(userId: number, cards: Array<string>) {
         this.userId = userId
         this.towerLimit = 20
         this.energy = 50
         this.towers = new Array<Tower>
         this.cards = new Array<TListItem>
-        this.cards = table.clone(TowerList)
+        for (let i = 0; i < cards.size(); i++) {
+            this.cards.push(TowerList[StringList.get(cards[i])!])
+        }
         this.attList = new Array<Array<Mob>>()
         this.attNumList = new Array<Array<number>>()
     }
