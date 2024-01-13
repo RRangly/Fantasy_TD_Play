@@ -36,44 +36,57 @@ Data and modules available to both the client and server are stored in Replicate
 
 Gui, Traits, Mob, Tower, and Map Data are stored in ReplicatedStorage.
 
-### Game
+- Game
 
 The GuiAssets.tsx file is for GUI components in Roact, in JSX syntax.
 
 Traits.ts file is for the Trait instance, which users gain throughout the playthrough
 
-### Maps
+- Maps
 
 All files in this file are for storing data of each map in the game
 
-### Mobs
+- Mobs
 
 MobMechanics.ts creates the mechanic for Mob instances (spawning, movement, health, etc.) As the game gets further into development, mobs will be just like towers, with each mob having a unique power.
 
-### Towers
+- Towers
 
 All files in this folder are for storing data of each tower in the game. Since each tower has a unique mechanics,
 
 TowerMechanics.ts creates the mechanic for Tower instances (finding the best target, level, stats, etc.)
 
-### Data
+- Data
 
 The data.ts file manages the game data. This code is fairly short since it utilizes a very efficient table system that Roblox provides, which tables unless cloned, are a reference to a single table and not a separate one from other tables pointing to the same data.
 
 ## ServerScriptService
 
-### Modules
+- Modules
 
 BaseManager.ts manages the player's base's health.
 
 CoinManager.ts manages the player's coins.
 
-MapManager.ts manages loading maps and placing them in the correct place, utilizing the Maps file in ReplicatedStorage
+MapManager.ts manages loading maps and placing them in the correct place, utilizing the Maps file in ReplicatedStorage.
 
-MobManager.ts manages mob behaviour, spawning them, despawning them, giving damage to them, moving them, utilizing the Mobs file in ReplicatedStorage
+MobManager.ts manages mob behaviour, spawning, despawning, giving damage to, and moving them, utilizing the Mobs file in ReplicatedStorage.
 
-###Game
+ShopManager.ts used to manage the shop, but the shop is currently gone.
 
-All server-sided code are ultimately done in this file.
+TowerManager.ts manages placing, upgrading, selling, and changing the tower, along with attacking them.
+
+TraitsManager.ts manages choosing traits, and invoking them at the right time.
+
+WaveManager.ts manages each wave, determining how many and how strong the mobs are going to be, by assigning weights and a degree of randomness.
+
+- Game
+
+In this part, I will explain the execution process of the game code.
+
+All server-side codes are ultimately done in this file (Game.server.ts).
+
+(The players join the lobby of the game first, a different codebase that isn't public yet, then gets sent to this instance) When the player joins the game, it sends a signal to the server once loaded.
+Then, the server sets up a knit service to communicate, then creates an instance of the player
 
 ## StarterPlayer
