@@ -87,6 +87,8 @@ In this part, I will explain the execution process of the game code.
 All server-side codes are ultimately done in this file (Game.server.ts).
 
 (The players join the lobby of the game first, a different codebase that isn't public yet, then gets sent to this instance) When the player joins the game, it sends a signal to the server once loaded.
-Then, the server sets up a knit service to communicate, then creates an instance of the player
+Then, the server sets up a knit service to communicate and creates an instance of the player, which manages player data and executes code whenever the player sends a signal to it.
+
+The game updates every 0.1 seconds (Tower Attacks, movement, etc) and sends data to the client every 0.5 seconds (coin, health, etc)
 
 ## StarterPlayer
