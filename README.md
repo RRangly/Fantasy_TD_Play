@@ -2,7 +2,9 @@
 
 This game Is a tower defence game on roblox that is actively being worked on. 
 
-This game was made using the Rojo framework alongside Roblox-ts which compiles typescript into luau (language used by Roblox), (used because luau doesn't provide proper type checking, with typescript being supported better in IDEs), and also Roact (A UI framework made for Roblox in the style of React, not affiliated with Facebook)
+This game was made using the Rojo framework alongside Roblox-ts which compiles typescript into luau (language used by Roblox), (used because luau doesn't provide proper type checking, with typescript being supported better in IDEs), and also Roact (A UI framework made for Roblox in the style of React)
+
+I've taught myself to structure my code reading other Roblox creators' public repositories. I am making this repository public in case someone like me is trying to make a similar game. If you're able to learn anything, I'm happy!
 
 # Motivation for starting
 
