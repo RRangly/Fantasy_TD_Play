@@ -12,7 +12,7 @@ I started developing this game as I thought that traditional tower defence games
 
 # process of development
 
-the game is still in development, and in the process of developing, I learned many things, in common with the first game I developed. I learned the typescript programming language, a language based on JavaScript that includes type checking. I used algorithms such as binary trees to manage mobs and structured the code modularly.
+the game is still in development, and in the process of developing, I learned many things, in common with the first game I developed. I learned the typescript programming language, a language based on JavaScript that includes type checking. The code is structured modularly, and utilizes Object Oriented Programming.
 
 # Code Explanation
 
