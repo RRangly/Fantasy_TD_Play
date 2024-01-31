@@ -48,6 +48,7 @@ export enum TowerPriority {
 
 //Base class for all towers
 export abstract class Tower {
+    abstract readonly index: number
     abstract readonly name: string
     abstract readonly image: string
     abstract readonly stats: Array<towerLevel>

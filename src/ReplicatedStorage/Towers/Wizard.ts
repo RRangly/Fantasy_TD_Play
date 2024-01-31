@@ -56,6 +56,7 @@ export const WizardInfo = {
 }
 //The class itself
 class Wizard extends Tower {
+    index = 0
     name: string
     image: string
     stats: Array<towerLevel>

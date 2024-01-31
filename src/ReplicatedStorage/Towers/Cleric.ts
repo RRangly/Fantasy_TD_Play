@@ -56,6 +56,7 @@ export const ClericInfo = {
 }
 //The class itself
 class Cleric extends Tower {
+    index = 3
     name: string
     image: string
     stats: Array<towerLevel>

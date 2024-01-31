@@ -56,6 +56,7 @@ export const PaladinInfo = {
 }
 //The class itself
 class Paladin extends Tower {
+    index = 2
     name: string
     image: string
     stats: Array<towerLevel>

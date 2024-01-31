@@ -56,6 +56,7 @@ export const DwarfInfo = {
 }
 //The class itself
 class Dwarf extends Tower {
+    index = 3
     name: string
     image: string
     stats: Array<towerLevel>

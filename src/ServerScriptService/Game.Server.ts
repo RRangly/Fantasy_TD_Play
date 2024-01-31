@@ -12,16 +12,11 @@ import { Mob } from "ReplicatedStorage/Mobs/MobMechanics";
 import { AttackInfo } from "ReplicatedStorage/Towers/TowerMechanics";
 import { t } from "@rbxts/t";
 import { TowerList } from "ReplicatedStorage/Towers/Towers";
+import { SaveData } from "./DataSaveStructure";
 
 declare global {
     interface KnitServices {
         GameService: typeof GameService
-    }
-}
-
-interface PlayerData {
-    towerManager: {
-        selected: []
     }
 }
 
@@ -35,10 +30,10 @@ export class TDPlayer {
     traitsManager: TraitsManager;
     waveManager: WaveManager;
     sounds: Array<string>;
-    constructor(player: Player, data: PlayerData) {
+    constructor(player: Player, data: SaveData) {
         this.userID = player.UserId
         this.mapManager = new MapManager("Forest_Camp", new Vector3(0, 0, 0))
-        this.towerManager = new TowerManager(this.userID, data.towerManager.selected)
+        this.towerManager = new TowerManager(this.userID, data.towerManager)
         this.mobManager = new MobManager(this.userID)
         this.baseManager = new BaseManager(this.userID)
         this.coinManager = new CoinManager(this.userID)
@@ -123,7 +118,7 @@ export const GameService = KnitServer.CreateService({
     KnitInit() {
         this.Client.gameLoaded.Connect((player: Player) => {
             const datas = DataStoreService.GetDataStore("PlayerDatas", "Players")
-            const pData = datas.GetAsync(tostring(player.UserId))[0] as PlayerData
+            const pData = datas.GetAsync(tostring(player.UserId))[0] as SaveData
             const tdPlayer = new TDPlayer(player, pData)
             this.TdPlayers.set(player.UserId, tdPlayer)
             task.wait(5)

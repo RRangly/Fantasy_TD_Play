@@ -56,6 +56,7 @@ export const MinigunInfo = {
 }
 //The class itself
 class Minigunner extends Tower {
+    index = 1
     name: string
     image: string
     stats: Array<towerLevel>
