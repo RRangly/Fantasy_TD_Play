@@ -2,27 +2,27 @@
 
 This game Is a tower defence game on roblox that is actively being worked on. 
 
-This game was made using the Rojo framework alongside Roblox-ts which compiles typescript into luau (language used by Roblox), (used because luau doesn't provide proper type checking, with typescript being supported better in IDEs), and also Roact (A UI framework made for Roblox in the style of React)
+This game was made using the Rojo framework alongside Roblox-ts, which compiles typescript into luau (language used by Roblox) (used because luau doesn't provide proper type checking, with typescript being supported better in IDEs), and also Roact (A UI framework made for Roblox in the style of React)
 
-I've taught myself to structure my code reading other Roblox creators' public repositories. I am making this repository public in case someone like me is trying to make a similar game. If you're able to learn anything, I'm happy!
+I've taught myself to structure my code by reading other Roblox creators' public repositories. I am making this repository public in case someone is trying to make a similar game.
 
-# Motivation for starting
+# The Idea
 
-I started developing this game as I thought that traditional tower defence games lacked lots of strategies that could make the game more interesting.
+This game was started to create a tower defence game differing from traditional ones. At the time of starting this project, I realized that many tower defence games in Roblox lacked the element of strategy. This game aims to encourage players to strategize by incorporating an element of randomness.
 
 # process of development
 
-the game is still in development, and in the process of developing, I learned many things, in common with the first game I developed. I learned the typescript programming language, a language based on JavaScript that includes type checking. The code is structured modularly, and utilizes Object Oriented Programming.
+the game is in the process of its late development and is to be planned to be released in a few months. I learned many things that are in common with the first game I developed. I learned the typescript programming language, a language based on JavaScript that includes type checking. The code is structured modularly and utilizes object-oriented programming.
 
 # Code Explanation
 
-All codes by me are stored in the src folder. The code is written in typescript, and Roblox-ts compiles it into lua, then Rojo transfers the code to roblox studio.
+All codes by me are stored in the src folder. The code is written in typescript, Roblox-ts compiles it into lua, and then Rojo transfers it to roblox studio.
 
-All code is in typescript, though executed in lua.
+All code is in typescript, though executed in Lua.
 
 Roact, a Roblox version of React is used to crete guis.
 
-Knit, a Client-Server communication library, is used to manage Client-Server communication without the direct use of remote events and to make it easier to manage data.
+Knit, a Client-Server communication library, is used to manage Client-Server communication without the direct use of remote events and to make data management easier.
 
 .client.ts is a PlayerScript, in which only the client is affected
 
@@ -30,7 +30,7 @@ Knit, a Client-Server communication library, is used to manage Client-Server com
 
 .ts is a ModuleScript, in which it can affect things based on the executor of the code
 
-There aren't many comments on the code, as its names are self-explanatory, but still created an explanation in this page to explain how it is structured as a whole
+There aren't many comments on the code, as its names are self-explanatory, but I still created an explanation on this page to explain how it is structured as a whole.
 
 ## ReplicatedStorage
 
@@ -99,9 +99,9 @@ The game updates every 0.1 seconds (Tower Attacks, movement, etc) and sends data
 
 Healthdisplay.ts displays the health of the players' base.
 
-Hud.tsx and Towerclient.tsx manages player UI related to towers.
+Hud.tsx and Towerclient.tsx manage player UI related to towers.
 
 - Game
 
 All client-side code are ultimately executed in this file (Game.client.ts).
-Recieves signals from servers, then execute the corresponding modulescript
+Receives signals from servers, then executes the corresponding module script
