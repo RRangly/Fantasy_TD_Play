@@ -64,6 +64,8 @@ The data.ts file manages the game data. This code is fairly short since it utili
 
 ## ServerScriptService
 
+The codes run on the server side are stored in this folder.
+
 - Modules
 
 BaseManager.ts manages the player's base's health.
@@ -80,17 +82,26 @@ TowerManager.ts manages placing, upgrading, selling, and changing the tower, alo
 
 TraitsManager.ts manages choosing traits, and invoking them at the right time.
 
-WaveManager.ts manages each wave, determining how many and how strong the mobs are going to be, by assigning weights and a degree of randomness.
+WaveManager.ts manages each wave, determining the number and strength of the mobs by assigning weights and a degree of randomness.
 
 - Game
 
 In this part, I will explain the execution process of the game code.
 
-All server-side codes are ultimately done in this file (Game.server.ts).
+All server-side codes are ultimately executed in this file (Game.server.ts).
 
-(The players join the lobby of the game first, a different codebase that isn't public yet, then gets sent to this instance) When the player joins the game, it sends a signal to the server once loaded.
+(The players join the game's lobby first, which is a different codebase that isn't public yet, and then they get sent to this instance.) When the player joins the game, it sends a signal to the server once it is loaded.
 Then, the server sets up a knit service to communicate and creates an instance of the player, which manages player data and executes code whenever the player sends a signal to it.
 
 The game updates every 0.1 seconds (Tower Attacks, movement, etc) and sends data to the client every 0.5 seconds (coin, health, etc)
 
 ## StarterPlayer
+
+Healthdisplay.ts displays the health of the players' base.
+
+Hud.tsx and Towerclient.tsx manages player UI related to towers.
+
+- Game
+
+All client-side code are ultimately executed in this file (Game.client.ts).
+Recieves signals from servers, then execute the corresponding modulescript
