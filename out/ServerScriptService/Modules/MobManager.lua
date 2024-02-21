@@ -1,9 +1,9 @@
--- Compiled with roblox-ts v2.1.1
+-- Compiled with roblox-ts v2.2.0
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("RuntimeLib"))
--- Manages Mobs
+--Manages Mobs
 local Mob = TS.import(script, game:GetService("ReplicatedStorage"), "TS", "Mobs", "MobMechanics").Mob
 local GetData = TS.import(script, game:GetService("ReplicatedStorage"), "TS", "Data").GetData
--- Manages Mobs as a whole, helps access the Mob Instance
+--Manages Mobs as a whole, helps access the Mob Instance
 local MobManager
 do
 	MobManager = setmetatable({}, {

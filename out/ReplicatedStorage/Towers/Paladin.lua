@@ -1,4 +1,4 @@
--- Compiled with roblox-ts v2.1.1
+-- Compiled with roblox-ts v2.2.0
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("RuntimeLib"))
 local _TowerMechanics = TS.import(script, game:GetService("ReplicatedStorage"), "TS", "Towers", "TowerMechanics")
 local Tower = _TowerMechanics.Tower
@@ -51,7 +51,7 @@ local PaladinInfo = {
 	offensive = true,
 	image = "NotReady",
 }
--- The class itself
+--The class itself
 local Paladin
 do
 	local super = Tower
@@ -68,6 +68,7 @@ do
 	end
 	function Paladin:constructor(position, model)
 		super.constructor(self)
+		self.index = 2
 		local info = PaladinInfo
 		self.name = info.name
 		self.image = info.image
@@ -109,7 +110,7 @@ do
 		end
 	end
 end
--- Factory function
+--Factory function
 local function newPaladin(position, model)
 	return Paladin.new(position, model)
 end

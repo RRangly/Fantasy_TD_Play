@@ -1,5 +1,5 @@
--- Compiled with roblox-ts v2.1.1
--- Manages player coins, used to buy towers and items
+-- Compiled with roblox-ts v2.2.0
+--Manages player coins, used to buy towers and items
 local CoinManager
 do
 	CoinManager = setmetatable({}, {

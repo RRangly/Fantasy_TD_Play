@@ -1,4 +1,4 @@
--- Compiled with roblox-ts v2.1.1
+-- Compiled with roblox-ts v2.2.0
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("RuntimeLib"))
 local _Minigunner = TS.import(script, game:GetService("ReplicatedStorage"), "TS", "Towers", "Minigunner")
 local MinigunInfo = _Minigunner.MinigunInfo
@@ -17,32 +17,25 @@ local PaladinInfo = _Paladin.PaladinInfo
 local newPaladin = _Paladin.newPaladin
 local TowerList = {}
 TowerList[1] = {
-	tInfo = MinigunInfo,
-	tClass = newMinigunner,
-}
-TowerList[2] = {
 	tInfo = WizardInfo,
 	tClass = newWizard,
 }
+TowerList[2] = {
+	tInfo = MinigunInfo,
+	tClass = newMinigunner,
+}
 TowerList[3] = {
-	tInfo = DwarfInfo,
-	tClass = newDwarf,
-}
-TowerList[4] = {
-	tInfo = ClericInfo,
-	tClass = newCleric,
-}
-TowerList[5] = {
 	tInfo = PaladinInfo,
 	tClass = newPaladin,
 }
-local StringList = {}
-StringList.Minigunner = 0
-StringList.Wizard = 1
-StringList.Dwarf = 2
-StringList.Cleric = 3
-StringList.Paladin = 4
+TowerList[4] = {
+	tInfo = DwarfInfo,
+	tClass = newDwarf,
+}
+TowerList[5] = {
+	tInfo = ClericInfo,
+	tClass = newCleric,
+}
 return {
 	TowerList = TowerList,
-	StringList = StringList,
 }

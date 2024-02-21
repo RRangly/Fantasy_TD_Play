@@ -1,5 +1,5 @@
--- Compiled with roblox-ts v2.1.1
--- Manages Base Health
+-- Compiled with roblox-ts v2.2.0
+--Manages Base Health
 local BaseManager
 do
 	BaseManager = setmetatable({}, {

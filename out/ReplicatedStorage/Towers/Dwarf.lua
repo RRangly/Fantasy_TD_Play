@@ -1,4 +1,4 @@
--- Compiled with roblox-ts v2.1.1
+-- Compiled with roblox-ts v2.2.0
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("RuntimeLib"))
 local _TowerMechanics = TS.import(script, game:GetService("ReplicatedStorage"), "TS", "Towers", "TowerMechanics")
 local Tower = _TowerMechanics.Tower
@@ -51,7 +51,7 @@ local DwarfInfo = {
 	offensive = true,
 	image = "NotReady",
 }
--- The class itself
+--The class itself
 local Dwarf
 do
 	local super = Tower
@@ -68,6 +68,7 @@ do
 	end
 	function Dwarf:constructor(position, model)
 		super.constructor(self)
+		self.index = 3
 		local info = DwarfInfo
 		self.name = info.name
 		self.image = info.image
@@ -109,7 +110,7 @@ do
 		end
 	end
 end
--- Factory function
+--Factory function
 local function newDwarf(position, model)
 	return Dwarf.new(position, model)
 end

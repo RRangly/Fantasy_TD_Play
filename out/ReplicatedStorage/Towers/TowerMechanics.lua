@@ -1,5 +1,5 @@
--- Compiled with roblox-ts v2.1.1
--- Interfaces for managing towers
+-- Compiled with roblox-ts v2.2.0
+--Interfaces for managing towers
 local TowerPriority
 do
 	local _inverse = {}
@@ -13,14 +13,14 @@ do
 	TowerPriority.Weakest = 2
 	_inverse[2] = "Weakest"
 end
--- Base class for all towers
+--Base class for all towers
 local Tower
 do
 	Tower = {}
 	function Tower:constructor()
 	end
 end
--- finds the targets based on numerical information provided, within a set group of mobs
+--finds the targets based on numerical information provided, within a set group of mobs
 local function findTarget(mobs, priority)
 	local mobsize = #mobs
 	local target

@@ -1,13 +1,11 @@
--- Compiled with roblox-ts v2.1.1
+-- Compiled with roblox-ts v2.2.0
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("RuntimeLib"))
 local _services = TS.import(script, game:GetService("ReplicatedStorage"), "rbxts_include", "node_modules", "@rbxts", "services")
 local ReplicatedStorage = _services.ReplicatedStorage
 local Workspace = _services.Workspace
 local GetData = TS.import(script, game:GetService("ReplicatedStorage"), "TS", "Data").GetData
 local TowerPriority = TS.import(script, game:GetService("ReplicatedStorage"), "TS", "Towers", "TowerMechanics").TowerPriority
-local _Towers = TS.import(script, game:GetService("ReplicatedStorage"), "TS", "Towers", "Towers")
-local StringList = _Towers.StringList
-local TowerList = _Towers.TowerList
+local TowerList = TS.import(script, game:GetService("ReplicatedStorage"), "TS", "Towers", "Towers").TowerList
 local TowerManager
 do
 	TowerManager = setmetatable({}, {
@@ -20,12 +18,13 @@ do
 		local self = setmetatable({}, TowerManager)
 		return self:constructor(...) or self
 	end
-	function TowerManager:constructor(userId, cards)
+	function TowerManager:constructor(userId, saveData)
 		self.userId = userId
 		self.towerLimit = 20
 		self.energy = 50
 		self.towers = {}
 		self.cards = {}
+		local selected = saveData.selected
 		do
 			local i = 0
 			local _shouldIncrement = false
@@ -35,14 +34,12 @@ do
 				else
 					_shouldIncrement = true
 				end
-				if not (i < #cards) then
+				if not (i < #selected) then
 					break
 				end
 				local _cards = self.cards
-				local _exp = TowerList
-				local _arg0 = cards[i + 1]
-				local _arg0_1 = _exp[StringList[_arg0] + 1]
-				table.insert(_cards, _arg0_1)
+				local _arg0 = TowerList[selected[i + 1] + 1]
+				table.insert(_cards, _arg0)
 			end
 		end
 		self.attList = {}
@@ -81,7 +78,7 @@ do
 			local _towers = self.towers
 			local _arg0_1 = card.tClass(place, clone)
 			table.insert(_towers, _arg0_1)
-			-- delete this.cards[cardIndex]
+			--delete this.cards[cardIndex]
 			return true
 		end
 		return false

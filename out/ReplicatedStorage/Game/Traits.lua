@@ -1,5 +1,5 @@
--- Compiled with roblox-ts v2.1.1
--- Base class for Traits
+-- Compiled with roblox-ts v2.2.0
+--Base class for Traits
 local Trait
 do
 	Trait = setmetatable({}, {
@@ -23,7 +23,7 @@ do
 		self._update(self, info)
 	end
 end
--- Traits Table
+--Traits Table
 local Traits = {}
 Traits[1] = {
 	name = "SharpShooter",

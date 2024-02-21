@@ -1,4 +1,4 @@
--- Compiled with roblox-ts v2.1.1
+-- Compiled with roblox-ts v2.2.0
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("RuntimeLib"))
 local _knit = TS.import(script, game:GetService("ReplicatedStorage"), "rbxts_include", "node_modules", "@rbxts", "knit", "Knit")
 local KnitServer = _knit.KnitServer
@@ -32,7 +32,7 @@ do
 	function TDPlayer:constructor(player, data)
 		self.userID = player.UserId
 		self.mapManager = MapManager.new("Forest_Camp", Vector3.new(0, 0, 0))
-		self.towerManager = TowerManager.new(self.userID, data.towerManager.selected)
+		self.towerManager = TowerManager.new(self.userID, data.towerManager)
 		self.mobManager = MobManager.new(self.userID)
 		self.baseManager = BaseManager.new(self.userID)
 		self.coinManager = CoinManager.new(self.userID)

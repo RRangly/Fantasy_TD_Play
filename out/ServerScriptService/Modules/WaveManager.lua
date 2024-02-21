@@ -1,7 +1,7 @@
--- Compiled with roblox-ts v2.1.1
+-- Compiled with roblox-ts v2.2.0
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("RuntimeLib"))
 local GetData = TS.import(script, game:GetService("ReplicatedStorage"), "TS", "Data").GetData
--- Mob Distributions
+--Mob Distributions
 local distributions = {}
 distributions[1] = { 0, 1, 0, 0 }
 local _exp = distributions[1]
@@ -30,9 +30,9 @@ do
 		local mobManager = data.mobManager
 		local traitsManager = data.traitsManager
 		self.currentWave += 1
-		-- if (this.currentWave % 5) {
-		-- traitsManager?.newTraits()
-		-- }
+		--if (this.currentWave % 5) {
+		--    traitsManager?.newTraits()
+		--}
 		local weight = bit32.bxor(1.095, self.currentWave * 100)
 		local waveType = math.random(1, 10)
 		local mobDis

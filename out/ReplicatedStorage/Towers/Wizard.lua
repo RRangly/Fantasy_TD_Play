@@ -1,4 +1,4 @@
--- Compiled with roblox-ts v2.1.1
+-- Compiled with roblox-ts v2.2.0
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("RuntimeLib"))
 local _TowerMechanics = TS.import(script, game:GetService("ReplicatedStorage"), "TS", "Towers", "TowerMechanics")
 local Tower = _TowerMechanics.Tower
@@ -51,7 +51,7 @@ local WizardInfo = {
 	offensive = true,
 	image = "NotReady",
 }
--- The class itself
+--The class itself
 local Wizard
 do
 	local super = Tower
@@ -68,6 +68,7 @@ do
 	end
 	function Wizard:constructor(position, model)
 		super.constructor(self)
+		self.index = 0
 		local info = WizardInfo
 		self.name = info.name
 		self.image = info.image
@@ -109,7 +110,7 @@ do
 		end
 	end
 end
--- Factory function
+--Factory function
 local function newWizard(position, model)
 	return Wizard.new(position, model)
 end

@@ -1,5 +1,5 @@
--- Compiled with roblox-ts v2.1.1
--- Manages and Saves Player Datas
+-- Compiled with roblox-ts v2.2.0
+--Manages and Saves Player Datas
 local Data = {}
 local function SetData(pIndex, data)
 	local _pIndex = pIndex
